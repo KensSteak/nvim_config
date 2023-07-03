@@ -3,10 +3,6 @@ filetype plugin indent off
 
 let mapleader = "\<Space>"
 
-set runtimepath+=~/workspace/my_date_plugin
-lua require('my_date_plugin')
-command! InsertDateTime lua require('my_date_plugin').insert_date_time()
-
 " ---------------------------------------------------------------
 " dein setting
 " ---------------------------------------------------------------
@@ -75,44 +71,6 @@ nmap <Leader>Y "+y$
 nmap <Leader>p "+p
 vmap <Leader>y "+y
 vmap <Leader>p "+p
-
-" function! YankLine(with_file_name, excel) abort
-"     if a:excel == 1
-"       if a:with_file_name == 1
-"         let @+ = buffer_name() . ":,\n,L" . line(".")
-"       else
-"         let @+ = ",L" . line(".")
-"       endif
-"     else
-"       if a:with_file_name == 1
-"         let @+ = buffer_name() . " L" . line(".")
-"       else
-"         let @+ = "L" . line(".")
-"       endif
-"     endif
-" endfunction
-" function! YankRange(with_file_name, excel) abort range
-"     if a:excel == 1
-"       if a:with_file_name == 1
-"         let @+ = buffer_name() . ":,\n,L" . a:firstline . "-L" . a:lastline
-"       else
-"         let @+ = ",L" . a:firstline . "-L" . a:lastline
-"       endif
-"     else
-"       if a:with_file_name == 1
-"         let @+ = buffer_name() . " L" . a:firstline . "-L" . a:lastline
-"       else
-"         let @+ = "L" . a:firstline . "-L" . a:lastline
-"       endif
-"     endif
-" endfunction
-" command! -range YankRange <line1>,<line2>call YankRange()
-" nnoremap <silent> <Leader>l :call YankLine(1, 0)<CR>
-" nnoremap <silent> <Leader>ef :call YankLine(1, 1)<CR>
-" nnoremap <silent> <Leader>el :call YankLine(0, 1)<CR>
-" vnoremap <silent> <Leader>l :call YankRange(1, 0)<CR>
-" vnoremap <silent> <Leader>ef :call YankRange(1, 1)<CR>
-" vnoremap <silent> <Leader>el :call YankRange(0, 1)<CR>
 
 " kill buffer
 nnoremap <silent> <Leader>k :bd<CR>
