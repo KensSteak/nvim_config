@@ -1,3 +1,0 @@
-archive_base = ".archive"
-input_files = ["dein.toml", "dein_lazy.toml"]
-output_file = "plugin_info.md"
