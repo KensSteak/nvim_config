@@ -3,22 +3,10 @@ vim.opt.filetype = "plugin", "indent", "off"
 
 vim.g.mapleader = " "
 
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable", -- latest stable release
-    lazypath,
-  })
-end
-vim.opt.rtp:prepend(lazypath)
+--------------------------------------------------------------------------------------
+-- base config -----------------------------------------------------------------------
+--------------------------------------------------------------------------------------
 
------------------------------------------------------------------
--- config -------------------------------------------------------
------------------------------------------------------------------
 vim.opt.swapfile = false
 vim.opt.number = true
 vim.opt.cursorline = true
@@ -26,15 +14,24 @@ vim.opt.incsearch = true
 vim.opt.hlsearch = true
 vim.opt.showmatch = true
 vim.opt.matchtime = 1
-vim.opt.wrap = true
-vim.opt.whichwrap = 'h','l'
+vim.opt.wrap = false
 vim.opt.wrapscan = false
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.hidden = true
-vim.opt.autoindent = true
 vim.opt.history = 10000
 vim.opt.helplang = 'ja', 'en'
+vim.opt.autoindent = true
+vim.opt.breakindent = true
+vim.opt.smarttab = true
+vim.opt.shiftwidth = 2
+vim.opt.tabstop = 2
+vim.opt.signcolumn = 'yes' --行数表示の横にLSP用の余白を常時表示
+
+if vim.fn.exists('+termguicolors') == 1 and vim.env.TERM_PROGRAM ~= "Apple_Terminal" then
+    vim.opt.termguicolors = true
+end
+vim.opt.laststatus = 2
 
 vim.keymap.set('n', 'Y', 'y$', {noremap=true})
 vim.keymap.set('n', '<esc><esc>', ':<C-u>nohlsearch<CR>', {noremap=true, silent = true}) 
@@ -48,10 +45,28 @@ vim.keymap.set('n', '<Leader>P', '"+P', {noremap=true})
 -- use clipboard <Leader> + ~
 vim.keymap.set('n', '<Leader>k', ':<C-u>bd<CR>', {noremap=true, silent=true}) 
 
+-- split window
+vim.keymap.set('n', '<Leader>ss', ':split<Return><C-w>w')
+vim.keymap.set('n', '<Leader>sv', ':vsplit<Return><C-w>w')
 
------------------------------------------------------------------
--- Lazy load plugins --------------------------------------------
------------------------------------------------------------------
+--------------------------------------------------------------------------------------
+-- plugin config ---------------------------------------------------------------------
+--------------------------------------------------------------------------------------
+
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
+end
+
+vim.opt.rtp:prepend(lazypath)
+
 require('lazy').setup({
 {
   "folke/tokyonight.nvim",
@@ -67,7 +82,87 @@ require('lazy').setup({
   'lewis6991/gitsigns.nvim',
   lazy = false,
   config = function()
-    require('gitsigns').setup()
+    require('gitsigns').setup {
+      signs = {
+        add          = { text = '│' },
+        change       = { text = '│' },
+        delete       = { text = '_' },
+        topdelete    = { text = '‾' },
+        changedelete = { text = '~' },
+        untracked    = { text = '┆' },
+      },
+      signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
+      numhl      = false, -- Toggle with `:Gitsigns toggle_numhl`
+      linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
+      word_diff  = false, -- Toggle with `:Gitsigns toggle_word_diff`
+      watch_gitdir = {
+        follow_files = true
+      },
+      attach_to_untracked = true,
+      current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
+      current_line_blame_opts = {
+        virt_text = true,
+        virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
+        delay = 1000,
+        ignore_whitespace = false,
+      },
+      current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
+      sign_priority = 6,
+      update_debounce = 100,
+      status_formatter = nil, -- Use default
+      max_file_length = 40000, -- Disable if file is longer than this (in lines)
+      preview_config = {
+        -- Options passed to nvim_open_win
+        border = 'single',
+        style = 'minimal',
+        relative = 'cursor',
+        row = 0,
+        col = 1
+      },
+      yadm = {
+        enable = false
+      },
+      on_attach = function(bufnr)
+        local gs = package.loaded.gitsigns
+
+        local function map(mode, l, r, opts)
+          opts = opts or {}
+          opts.buffer = bufnr
+          vim.keymap.set(mode, l, r, opts)
+        end
+
+        -- Navigation
+        map('n', ']c', function()
+          if vim.wo.diff then return ']c' end
+          vim.schedule(function() gs.next_hunk() end)
+          return '<Ignore>'
+        end, {expr=true})
+
+        map('n', '[c', function()
+          if vim.wo.diff then return '[c' end
+          vim.schedule(function() gs.prev_hunk() end)
+          return '<Ignore>'
+        end, {expr=true})
+
+        -- Actions
+        map('n', '<leader>hs', gs.stage_hunk)
+        map('n', '<leader>hr', gs.reset_hunk)
+        map('v', '<leader>hs', function() gs.stage_hunk {vim.fn.line('.'), vim.fn.line('v')} end)
+        map('v', '<leader>hr', function() gs.reset_hunk {vim.fn.line('.'), vim.fn.line('v')} end)
+        map('n', '<leader>hS', gs.stage_buffer)
+        map('n', '<leader>hu', gs.undo_stage_hunk)
+        map('n', '<leader>hR', gs.reset_buffer)
+        map('n', '<leader>hp', gs.preview_hunk)
+        map('n', '<leader>hb', function() gs.blame_line{full=true} end)
+        map('n', '<leader>tb', gs.toggle_current_line_blame)
+        map('n', '<leader>hd', gs.diffthis)
+        map('n', '<leader>hD', function() gs.diffthis('~') end)
+        map('n', '<leader>td', gs.toggle_deleted)
+
+        -- Text object
+        map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+      end
+        }
   end
 },
 
@@ -323,6 +418,8 @@ require('lazy').setup({
       vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
     end
 
+    vim.g.vsnip_snippet_dirs = {os.getenv("HOME") .. "/.config/nvim/snippets"}
+
     local cmp = require('cmp')
     local lspkind = require('lspkind')
 
@@ -422,8 +519,6 @@ require('lazy').setup({
   'hrsh7th/vim-vsnip',
   event = 'InsertEnter',
   config = function()
-    vim.g.vsnip_snippet_dirs = {os.getenv("HOME") .. "/.config/nvim/snippets"}
-
     vim.keymap.set('i', '<C-l>', '<Plug>(vsnip-expand-or-jump)', {noremap=true})
     vim.keymap.set('s', '<C-l>', '<Plug>(vsnip-expand-or-jump)', {noremap=true})
   end
@@ -491,12 +586,8 @@ require('lazy').setup({
 },
 })
 
------------------------------------------------------------------
--- color scheme
------------------------------------------------------------------
-if vim.fn.exists('+termguicolors') == 1 and vim.env.TERM_PROGRAM ~= "Apple_Terminal" then
-    vim.opt.termguicolors = true
-end
-vim.opt.laststatus = 2
+------------------------------------------------------------------------------------
+-- color scheme --------------------------------------------------------------------
+------------------------------------------------------------------------------------
 
 vim.opt.filetype = "plugin", "indent","on"
