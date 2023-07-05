@@ -74,7 +74,7 @@ require('lazy').setup({
   priority = 1000, -- make sure to load this before all the other start plugins
   config = function()
     -- load the colorscheme here
-    vim.cmd([[colorscheme tokyonight]])
+    vim.cmd([[colorscheme tokyonight-night]])
   end,
 },
 
@@ -167,10 +167,81 @@ require('lazy').setup({
 },
 
 {
+  'numToStr/Comment.nvim',
+  config = function()
+    require('Comment').setup {
+      ---Add a space b/w comment and the line
+      padding = true,
+      ---Whether the cursor should stay at its position
+      sticky = true,
+      ---Lines to be ignored while (un)comment
+      ignore = nil,
+      ---LHS of toggle mappings in NORMAL mode
+      toggler = {
+          ---Line-comment toggle keymap
+          line = 'gcc',
+          ---Block-comment toggle keymap
+          block = 'gbc',
+      },
+      ---LHS of operator-pending mappings in NORMAL and VISUAL mode
+      opleader = {
+          ---Line-comment keymap
+          line = 'gc',
+          ---Block-comment keymap
+          block = 'gb',
+      },
+      ---LHS of extra mappings
+      extra = {
+          ---Add comment on the line above
+          above = 'gcO',
+          ---Add comment on the line below
+          below = 'gco',
+          ---Add comment at the end of line
+          eol = 'gcA',
+      },
+      ---Enable keybindings
+      ---NOTE: If given `false` then the plugin won't create any mappings
+      mappings = {
+          ---Operator-pending mapping; `gcc` `gbc` `gc[count]{motion}` `gb[count]{motion}`
+          basic = true,
+          ---Extra mapping; `gco`, `gcO`, `gcA`
+          extra = true,
+      },
+      ---Function to call before (un)comment
+      pre_hook = nil,
+      ---Function to call after (un)comment
+      post_hook = nil,
+    }
+  end
+},
+
+{
   'tversteeg/registers.nvim',
   lazy = false,
   config = function()
     require("registers").setup()
+  end
+},
+
+{
+  -- https://github.com/chrisgrieser/nvim-various-textobjs
+  'chrisgrieser/nvim-various-textobjs',
+  config = function()
+    -- default config
+    require("various-textobjs").setup {
+      -- lines to seek forwards for "small" textobjs (mostly characterwise textobjs)
+      -- set to 0 to only look in the current line
+      lookForwardSmall = 5, 
+
+      -- lines to seek forwards for "big" textobjs (mostly linewise textobjs)
+      lookForwardBig = 15,
+
+      -- use suggested keymaps (see README)
+      useDefaultKeymaps = true, 
+
+      -- disable some default keymaps, e.g. { "ai", "ii" }
+      disabledKeymaps = {},
+    }
   end
 },
 
@@ -181,7 +252,7 @@ require('lazy').setup({
     require('lualine').setup {
       options = {
         icons_enabled = true,
-        theme = 'auto',
+        theme = 'dracula',
         component_separators = { left = '|', right = '|'},
         section_separators = { left = '', right = ''},
         disabled_filetypes = {},
@@ -259,6 +330,23 @@ require('lazy').setup({
             -- Configuration here, or leave empty to use defaults
         })
     end
+},
+
+{
+  'anuvyklack/pretty-fold.nvim',
+   config = function()
+      require('pretty-fold').setup {
+        matchup_patterns = {
+          { '^%s*do$', 'end' }, -- do ... end blocks
+          { '^%s*if', 'end' },  -- if ... end
+          { '^%s*for', 'end' }, -- for
+          { 'function%s*%(', 'end' }, -- 'function( or 'function (''
+          {  '{', '}' },
+          { '%(', ')' }, -- % to escape lua pattern char
+          { '%[', ']' }, -- % to escape lua pattern char
+        },
+      }
+   end
 },
 
 {
@@ -552,6 +640,19 @@ require('lazy').setup({
               command = "clippy"
             }
           }
+      },
+      capabilities=capabilities
+    }
+    lspconfig.pylsp.setup {
+      settings = {
+        pylsp = {
+          plugins = {
+            pycodestyle = {
+              ignore = {},
+              maxLineLength = 100
+            }
+          }
+        }
       },
       capabilities=capabilities
     }
