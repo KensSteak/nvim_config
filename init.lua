@@ -1,7 +1,9 @@
-vim.opt.filetype = "off"
-vim.opt.filetype = "plugin, indent, off"
+vim.cmd('filetype off')
+vim.cmd('filetype plugin indent off')
 
 vim.g.mapleader = " "
+
+local keymap = require('vim.keymap')
 
 --------------------------------------------------------------------------------------
 -- base config -----------------------------------------------------------------------
@@ -20,7 +22,7 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.hidden = true
 vim.opt.history = 10000
-vim.opt.helplang = 'ja, en'
+vim.opt.helplang = 'ja,en'
 vim.opt.autoindent = true
 vim.opt.breakindent = true
 vim.opt.smarttab = true
@@ -33,21 +35,21 @@ if vim.fn.exists('+termguicolors') == 1 and vim.env.TERM_PROGRAM ~= "Apple_Termi
 end
 vim.opt.laststatus = 2
 
-vim.keymap.set('n', 'Y', 'y$', { noremap = true })
-vim.keymap.set('n', '<esc><esc>', ':<C-u>nohlsearch<CR>', { noremap = true, silent = true })
+keymap.set('n', 'Y', 'y$', { noremap = true })
+keymap.set('n', '<esc><esc>', ':<C-u>nohlsearch<CR>', { noremap = true, silent = true })
 
 -- use clipboard <Leader> + ~
-vim.keymap.set({ 'n', 'v' }, '<Leader>y', '"+y', { noremap = true })
-vim.keymap.set('n', '<Leader>Y', '"+y$', { noremap = true })
-vim.keymap.set({ 'n', 'v' }, '<Leader>p', '"+p', { noremap = true })
-vim.keymap.set('n', '<Leader>P', '"+P', { noremap = true })
+keymap.set({ 'n', 'v' }, '<Leader>y', '"+y', { noremap = true })
+keymap.set('n', '<Leader>Y', '"+y$', { noremap = true })
+keymap.set({ 'n', 'v' }, '<Leader>p', '"+p', { noremap = true })
+keymap.set('n', '<Leader>P', '"+P', { noremap = true })
 
 -- use clipboard <Leader> + ~
-vim.keymap.set('n', '<Leader>k', ':<C-u>bd<CR>', { noremap = true, silent = true })
+keymap.set('n', '<Leader>k', ':<C-u>bd<CR>', { noremap = true, silent = true })
 
 -- split window
-vim.keymap.set('n', '<Leader>ss', ':split<Return><C-w>w')
-vim.keymap.set('n', '<Leader>sv', ':vsplit<Return><C-w>w')
+keymap.set('n', '<Leader>ss', ':split<Return><C-w>w')
+keymap.set('n', '<Leader>sv', ':vsplit<Return><C-w>w')
 
 --------------------------------------------------------------------------------------
 -- plugin config ---------------------------------------------------------------------
@@ -137,7 +139,7 @@ require('lazy').setup({
           local function map(mode, l, r, opts)
             opts = opts or {}
             opts.buffer = bufnr
-            vim.keymap.set(mode, l, r, opts)
+            keymap.set(mode, l, r, opts)
           end
 
           -- Navigation
@@ -372,10 +374,10 @@ require('lazy').setup({
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
       local builtin = require('telescope.builtin')
-      vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-      vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
-      vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
-      vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+      keymap.set('n', '<leader>ff', builtin.find_files, {})
+      keymap.set('n', '<leader>fg', builtin.live_grep, {})
+      keymap.set('n', '<leader>fb', builtin.buffers, {})
+      keymap.set('n', '<leader>fh', builtin.help_tags, {})
 
       local actions = require("telescope.actions")
       require("telescope").setup {
@@ -635,8 +637,8 @@ require('lazy').setup({
     'hrsh7th/vim-vsnip',
     event = 'InsertEnter',
     config = function()
-      vim.keymap.set('i', '<C-l>', '<Plug>(vsnip-expand-or-jump)', { noremap = true })
-      vim.keymap.set('s', '<C-l>', '<Plug>(vsnip-expand-or-jump)', { noremap = true })
+      keymap.set('i', '<C-l>', '<Plug>(vsnip-expand-or-jump)', { noremap = true })
+      keymap.set('s', '<C-l>', '<Plug>(vsnip-expand-or-jump)', { noremap = true })
     end
   },
   { 'hrsh7th/vim-vsnip-integ',      event = 'InsertEnter' },
@@ -691,10 +693,10 @@ require('lazy').setup({
 
       -- Global mappings.
       -- See `:help vim.diagnostic.*` for documentation on any of the below functions
-      vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
-      vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-      vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
-      vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
+      keymap.set('n', '<space>e', vim.diagnostic.open_float)
+      keymap.set('n', '[d', vim.diagnostic.goto_prev)
+      keymap.set('n', ']d', vim.diagnostic.goto_next)
+      keymap.set('n', '<space>q', vim.diagnostic.setloclist)
 
       -- Use LspAttach autocommand to only map the following keys
       -- after the language server attaches to the current buffer
@@ -707,21 +709,21 @@ require('lazy').setup({
           -- Buffer local mappings.
           -- See `:help vim.lsp.*` for documentation on any of the below functions
           local opts = { buffer = ev.buf }
-          vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-          vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-          vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-          vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-          vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-          vim.keymap.set('n', '<Leader>wa', vim.lsp.buf.add_workspace_folder, opts)
-          vim.keymap.set('n', '<Leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
-          vim.keymap.set('n', '<Leader>wl', function()
+          keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+          keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+          keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+          keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+          keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+          keymap.set('n', '<Leader>wa', vim.lsp.buf.add_workspace_folder, opts)
+          keymap.set('n', '<Leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
+          keymap.set('n', '<Leader>wl', function()
             print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
           end, opts)
-          vim.keymap.set('n', '<Leader>D', vim.lsp.buf.type_definition, opts)
-          vim.keymap.set('n', '<F2>', vim.lsp.buf.rename, opts)
-          vim.keymap.set({ 'n', 'v' }, '<Leader>ca', vim.lsp.buf.code_action, opts)
-          vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-          vim.keymap.set('n', '<F3>', function()
+          keymap.set('n', '<Leader>D', vim.lsp.buf.type_definition, opts)
+          keymap.set('n', '<F2>', vim.lsp.buf.rename, opts)
+          keymap.set({ 'n', 'v' }, '<Leader>ca', vim.lsp.buf.code_action, opts)
+          keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+          keymap.set('n', '<F3>', function()
             vim.lsp.buf.format { async = true }
           end, opts)
         end,
@@ -731,7 +733,6 @@ require('lazy').setup({
 })
 
 ------------------------------------------------------------------------------------
--- color scheme --------------------------------------------------------------------
+-- finnaly -------------------------------------------------------------------------
 ------------------------------------------------------------------------------------
-
-vim.opt.filetype = "plugin, indent, on"
+vim.cmd('filetype plugin indent on')
