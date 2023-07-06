@@ -3,37 +3,38 @@ vim.cmd('filetype plugin indent off')
 
 vim.g.mapleader = " "
 
+local opt = vim.opt
 local keymap = require('vim.keymap')
 
 --------------------------------------------------------------------------------------
 -- base config -----------------------------------------------------------------------
 --------------------------------------------------------------------------------------
 
-vim.opt.swapfile = false
-vim.opt.number = true
-vim.opt.cursorline = true
-vim.opt.incsearch = true
-vim.opt.hlsearch = true
-vim.opt.showmatch = true
-vim.opt.matchtime = 1
-vim.opt.wrap = false
-vim.opt.wrapscan = false
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-vim.opt.hidden = true
-vim.opt.history = 10000
-vim.opt.helplang = 'ja,en'
-vim.opt.autoindent = true
-vim.opt.breakindent = true
-vim.opt.smarttab = true
-vim.opt.shiftwidth = 2
-vim.opt.tabstop = 2
-vim.opt.signcolumn = 'yes' --行数表示の横にLSP用の余白を常時表示
+opt.swapfile = false
+opt.number = true
+opt.cursorline = true
+opt.incsearch = true
+opt.hlsearch = true
+opt.showmatch = true
+opt.matchtime = 1
+opt.wrap = false
+opt.wrapscan = false
+opt.ignorecase = true
+opt.smartcase = true
+opt.hidden = true
+opt.history = 10000
+opt.helplang = 'ja,en'
+opt.autoindent = true
+opt.breakindent = true
+opt.smarttab = true
+opt.shiftwidth = 2
+opt.tabstop = 2
+opt.signcolumn = 'yes' --行数表示の横にLSP用の余白を常時表示
 
 if vim.fn.exists('+termguicolors') == 1 and vim.env.TERM_PROGRAM ~= "Apple_Terminal" then
-  vim.opt.termguicolors = true
+  opt.termguicolors = true
 end
-vim.opt.laststatus = 2
+opt.laststatus = 2
 
 keymap.set('n', 'Y', 'y$', { noremap = true })
 keymap.set('n', '<esc><esc>', ':<C-u>nohlsearch<CR>', { noremap = true, silent = true })
@@ -67,7 +68,7 @@ if not vim.loop.fs_stat(lazypath) then
   })
 end
 
-vim.opt.rtp:prepend(lazypath)
+opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
   {
@@ -477,8 +478,8 @@ require('lazy').setup({
     'lukas-reineke/indent-blankline.nvim',
     event = 'BufEnter',
     config = function()
-      vim.opt.list = true
-      vim.opt.listchars:append "eol:↴"
+      opt.list = true
+      opt.listchars:append "eol:↴"
       require('indent_blankline').setup {
         show_end_of_line = true,
       }
