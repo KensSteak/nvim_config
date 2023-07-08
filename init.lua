@@ -8,7 +8,6 @@ local keymap = require('vim.keymap')
 
 --------------------------------------------------------------------------------------
 -- base config -----------------------------------------------------------------------
---------------------------------------------------------------------------------------
 
 opt.swapfile = false
 opt.number = true
@@ -44,6 +43,7 @@ keymap.set({ 'n', 'v' }, '<Leader>y', '"+y', { noremap = true })
 keymap.set('n', '<Leader>Y', '"+y$', { noremap = true })
 keymap.set({ 'n', 'v' }, '<Leader>p', '"+p', { noremap = true })
 keymap.set('n', '<Leader>P', '"+P', { noremap = true })
+keymap.set({ 'n', 'v' }, '<Leader>d', '"+d', { noremap = true })
 
 -- split window
 keymap.set('n', '<Leader>ss', ':split<Return><C-w>w')
@@ -83,8 +83,55 @@ require('lazy').setup({
     priority = 1000, -- make sure to load this before all the other start plugins
     config = function()
       -- load the colorscheme here
-      vim.cmd([[colorscheme tokyonight-night]])
+      -- vim.cmd([[colorscheme tokyonight]])
     end,
+  },
+
+
+  {
+    'olivercederborg/poimandres.nvim',
+    lazy = false,    -- make sure we load this during startup if it is your main colorscheme
+    priority = 1000, -- make sure to load this before all the other start plugins
+    config = function()
+      require('poimandres').setup {
+        -- leave this setup function empty for default config
+        -- or refer to the configuration section
+        -- for configuration options
+        vim.cmd([[colorscheme poimandres]])
+      }
+    end
+  },
+
+  {
+    'mvllow/modes.nvim',
+    tag = 'v0.2.0',
+    config = function()
+      require('modes').setup()
+    end
+  },
+
+  {
+    'norcalli/nvim-colorizer.lua',
+    config = function()
+      require('colorizer').setup()
+    end
+  },
+
+  {
+    'lambdalisue/kensaku.vim',
+    dependencies = { 'vim-denops/denops.vim' },
+    lazy = false
+  },
+  {
+    -- kensaku-search
+    -- /キーでの検索でkensaku.vimを使うためのプラグイン。
+    'lambdalisue/kensaku-search.vim',
+    lazy = false,
+    config = function()
+      if vim.fn.exepath('deno') ~= '' then
+        vim.keymap.set('c', '<CR>', '<Plug>(kensaku-search-replace)<CR>')
+      end
+    end
   },
 
   {
@@ -320,7 +367,7 @@ require('lazy').setup({
       require('lualine').setup {
         options = {
           icons_enabled = true,
-          theme = 'dracula',
+          theme = 'poimandres',
           -- section_separators = { left = '', right = '' },
           -- component_separators = { left = '', right = '' },
           disabled_filetypes = {},
@@ -372,7 +419,6 @@ require('lazy').setup({
     'ggandor/leap.nvim',
     lazy = false,
     config = function()
-
       require('leap').add_default_mappings()
     end
   },
@@ -384,7 +430,7 @@ require('lazy').setup({
 
   {
     'romgrk/barbar.nvim',
-    dependencies =  {'kyazdani42/nvim-web-devicons', 'lewis6991/gitsigns.nvim'},
+    dependencies = { 'kyazdani42/nvim-web-devicons', 'lewis6991/gitsigns.nvim' },
     lazy = false,
     config = function()
       vim.g.barbar_auto_setup = false
@@ -411,7 +457,7 @@ require('lazy').setup({
       -- Pin/unpin buffer
       keymap.set('n', '<A-p>', '<Cmd>BufferPin<CR>', opts)
       -- Close buffer
-      keymap.set('n', '<Leader>b', '<Cmd>BufferClose<CR>', opts)
+      keymap.set('n', '<Leader>k', '<Cmd>BufferClose<CR>', opts)
       -- Wipeout buffer
       --                 :BufferWipeout
       -- Close commands
@@ -423,10 +469,10 @@ require('lazy').setup({
       -- Magic buffer-picking mode
       keymap.set('n', '<C-p>', '<Cmd>BufferPick<CR>', opts)
       -- Sort automatically by...
-      keymap.set('n', '<Leader>bb', '<Cmd>BufferOrderByBufferNumber<CR>', opts)
-      keymap.set('n', '<Leader>bd', '<Cmd>BufferOrderByDirectory<CR>', opts)
-      keymap.set('n', '<Leader>bl', '<Cmd>BufferOrderByLanguage<CR>', opts)
-      keymap.set('n', '<Leader>bw', '<Cmd>BufferOrderByWindowNumber<CR>', opts)
+      -- keymap.set('n', '<Leader>bb', '<Cmd>BufferOrderByBufferNumber<CR>', opts)
+      -- keymap.set('n', '<Leader>bd', '<Cmd>BufferOrderByDirectory<CR>', opts)
+      -- keymap.set('n', '<Leader>bl', '<Cmd>BufferOrderByLanguage<CR>', opts)
+      -- keymap.set('n', '<Leader>bw', '<Cmd>BufferOrderByWindowNumber<CR>', opts)
 
       -- Other:
       -- :BarbarEnable - enables barbar (enabled by default)
@@ -479,15 +525,15 @@ require('lazy').setup({
           button = '',
           -- Enables / disables diagnostic symbols
           diagnostics = {
-            [vim.diagnostic.severity.ERROR] = {enabled = true, icon = 'ﬀ'},
-            [vim.diagnostic.severity.WARN] = {enabled = true},
-            [vim.diagnostic.severity.INFO] = {enabled = false},
-            [vim.diagnostic.severity.HINT] = {enabled = true},
+            [vim.diagnostic.severity.ERROR] = { enabled = true, icon = 'ﬀ' },
+            [vim.diagnostic.severity.WARN] = { enabled = true },
+            [vim.diagnostic.severity.INFO] = { enabled = false },
+            [vim.diagnostic.severity.HINT] = { enabled = true },
           },
           gitsigns = {
-            added = {enabled = true, icon = '+'},
-            changed = {enabled = true, icon = '~'},
-            deleted = {enabled = true, icon = '-'},
+            added = { enabled = true, icon = '+' },
+            changed = { enabled = true, icon = '~' },
+            deleted = { enabled = true, icon = '-' },
           },
           filetype = {
             -- Sets the icon's highlight group.
@@ -497,25 +543,25 @@ require('lazy').setup({
             -- Requires `nvim-web-devicons` if `true`
             enabled = true,
           },
-          separator = {left = '▎', right = ''},
+          separator = { left = '▎', right = '' },
 
           -- If true, add an additional separator at the end of the buffer list
           separator_at_end = true,
 
           -- Configure the icons on the bufferline when modified or pinned.
           -- Supports all the base icon options.
-          modified = {button = '●'},
-          pinned = {button = '', filename = true},
+          modified = { button = '●' },
+          pinned = { button = '', filename = true },
 
           -- Use a preconfigured buffer appearance— can be 'default', 'powerline', or 'slanted'
           preset = 'default',
 
           -- Configure the icons on the bufferline based on the visibility of a buffer.
           -- Supports all the base icon options, plus `modified` and `pinned`.
-          alternate = {filetype = {enabled = false}},
-          current = {buffer_index = false},
-          inactive = {button = '×'},
-          visible = {modified = {buffer_number = false}},
+          alternate = { filetype = { enabled = false } },
+          current = { buffer_index = false },
+          inactive = { button = '×' },
+          visible = { modified = { buffer_number = false } },
         },
 
         -- If true, new buffers will be inserted at the start/end of the list.
@@ -546,11 +592,11 @@ require('lazy').setup({
           -- Use the default values: {event = 'BufWinLeave', text = nil}
           NvimTree = true,
           -- Or, specify the text used for the offset:
-          undotree = {text = 'undotree'},
+          undotree = { text = 'undotree' },
           -- Or, specify the event which the sidebar executes when leaving:
-          ['neo-tree'] = {event = 'BufWipeout'},
+          ['neo-tree'] = { event = 'BufWipeout' },
           -- Or, specify both
-          Outline = {event = 'BufWinLeave', text = 'symbols-outline'},
+          Outline = { event = 'BufWinLeave', text = 'symbols-outline' },
         },
 
         -- New buffer letters are assigned in this order. This order is
@@ -605,6 +651,7 @@ require('lazy').setup({
 
   {
     "nvim-telescope/telescope-frecency.nvim",
+    cmd = 'Telescope',
     config = function()
       require "telescope".load_extension("frecency")
     end,
@@ -622,41 +669,21 @@ require('lazy').setup({
       keymap.set('n', '<leader>fg', builtin.git_status, {})
       keymap.set('n', '<leader>fb', builtin.buffers, {})
       keymap.set('n', '<leader>fh', builtin.help_tags, {})
+      keymap.set('n', '<Leader>b', builtin.buffers, {})
 
       local actions = require("telescope.actions")
       require("telescope").setup {
         defaults = {
           mappings = {
             i = {
-              ["<esc>"] = actions.close
+              -- ["<esc>"] = actions.close
             },
           },
         },
       }
 
-      local previewers = require("telescope.previewers")
-      local Job = require("plenary.job")
-      local new_maker = function(filepath, bufnr, opts)
-        filepath = vim.fn.expand(filepath)
-        Job:new({
-          command = "file",
-          args = { "--mime-type", "-b", filepath },
-          on_exit = function(j)
-            local mime_type = vim.split(j:result()[1], "/")[1]
-            if mime_type == "text" then
-              previewers.buffer_previewer_maker(filepath, bufnr, opts)
-            else
-              vim.schedule(function()
-                vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, { "BINARY" })
-              end)
-            end
-          end
-        }):sync()
-      end
-
       require("telescope").setup {
         defaults = {
-          buffer_previewer_maker = new_maker,
           extensions = {
             fzf = {
               fuzzy = true,
@@ -681,7 +708,7 @@ require('lazy').setup({
       vim.api.nvim_set_keymap(
         "n",
         "<Leader>fb",
-        ":Telescope file_browser<CR>",
+        ":Telescope file_browser initial_mode=normal<CR>",
         { noremap = true }
       )
 
@@ -769,7 +796,7 @@ require('lazy').setup({
 
   {
     'hrsh7th/nvim-cmp',
-    event = 'InsertEnter, CmdlineEnter',
+    event  = 'InsertEnter, CmdlineEnter',
     config = function()
       local has_words_before = function()
         unpack = unpack or table.unpack
@@ -777,19 +804,21 @@ require('lazy').setup({
         return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
       end
 
-      local feedkey = function(key, mode)
-        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
-      end
-
-      vim.g.vsnip_snippet_dirs = { os.getenv("HOME") .. "/.config/nvim/snippets" }
-
       local cmp = require('cmp')
       local lspkind = require('lspkind')
+      local luasnip = require('luasnip')
+
+      -- load snippets from path/of/your/nvim/config/my-cool-snippets
+      -- luasnip.loaders.from_vscode.lazy_load({ paths = { os.getenv("HOME") .. "/Library/Application Support/Code/User/snippets" } })
+      require('luasnip.loaders.from_vscode').lazy_load({ paths = { os.getenv('HOME') .. '/.config/nvim/snippets/' } })
+      keymap.set({ 'i', 's' }, '<C-l>', '<Plug>luasnip-expand-or-jump', { silent = true, noremap = false })
+      keymap.set({ 'i', 's' }, '<A-h>', function() luasnip.jump(-1) end, { expr = true, noremap = false })
+      keymap.set({ 'i', 's' }, '<A-l>', function() luasnip.jump(1) end, { expr = true, noremap = false })
 
       cmp.setup({
         snippet = {
           expand = function(args)
-            vim.fn['vsnip#anonymous'](args.body)
+            require('luasnip').lsp_expand(args.body)
           end
         },
 
@@ -806,19 +835,24 @@ require('lazy').setup({
           ["<Tab>"] = cmp.mapping(function(fallback)
             if cmp.visible() then
               cmp.select_next_item()
-            elseif vim.fn["vsnip#available"](1) == 1 then
-              feedkey("<Plug>(vsnip-expand-or-jump)", "")
+              -- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
+              -- they way you will only jump inside the snippet region
+            elseif luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
             elseif has_words_before() then
               cmp.complete()
             else
-              fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+              fallback()
             end
           end, { "i", "s" }),
-          ["<S-Tab>"] = cmp.mapping(function()
+
+          ["<S-Tab>"] = cmp.mapping(function(fallback)
             if cmp.visible() then
               cmp.select_prev_item()
-            elseif vim.fn["vsnip#jumpable"](-1) == 1 then
-              feedkey("<Plug>(vsnip-jump-prev)", "")
+            elseif luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
             end
           end, { "i", "s" }),
           ['<C-b>'] = cmp.mapping.scroll_docs(-4),
@@ -838,7 +872,7 @@ require('lazy').setup({
 
         sources = cmp.config.sources({
             { name = 'nvim_lsp' },
-            { name = 'vsnip' },
+            { name = 'luasnip' },
             { name = 'nvim_lsp_signature_help' },
             { name = 'calc' },
           },
@@ -864,29 +898,40 @@ require('lazy').setup({
           { name = 'cmdline', keyword_length = 2 }
         })
       })
-
-      vim.cmd('let g:vsnip_filetypes = {}')
     end
   }, -- 以下、nvim-cmp
-  { 'hrsh7th/cmp-nvim-lsp',                 event = 'InsertEnter', dependencies = { "neovim/nvim-lspconfig" } },
-  { 'hrsh7th/cmp-buffer',                   event = 'InsertEnter' },
-  { 'hrsh7th/cmp-path',                     event = 'InsertEnter' },
-  { 'hrsh7th/cmp-vsnip',                    event = 'InsertEnter' },
-  { 'hrsh7th/cmp-cmdline',                  event = 'ModeChanged' },
-  { 'hrsh7th/cmp-nvim-lsp-signature-help',  event = 'InsertEnter', dependencies = { "neovim/nvim-lspconfig" } },
-  { 'hrsh7th/cmp-nvim-lsp-document-symbol', event = 'InsertEnter', dependencies = { "neovim/nvim-lspconfig" } },
-  { 'hrsh7th/cmp-calc',                     event = 'InsertEnter' },
-  { 'onsails/lspkind.nvim',                 event = 'InsertEnter' },
   {
-    'hrsh7th/vim-vsnip',
+    'hrsh7th/cmp-nvim-lsp',
     event = 'InsertEnter',
-    config = function()
-      keymap.set('i', '<C-l>', '<Plug>(vsnip-expand-or-jump)', { noremap = true })
-      keymap.set('s', '<C-l>', '<Plug>(vsnip-expand-or-jump)', { noremap = true })
-    end
+    dependencies = {
+      "neovim/nvim-lspconfig" }
   },
-  { 'hrsh7th/vim-vsnip-integ',      event = 'InsertEnter' },
-  { 'rafamadriz/friendly-snippets', event = 'InsertEnter' },
+  { 'hrsh7th/cmp-buffer',       event = 'InsertEnter' },
+  { 'hrsh7th/cmp-path',         event = 'InsertEnter' },
+  { 'saadparwaiz1/cmp_luasnip', event = 'InsertEnter' },
+  { 'hrsh7th/cmp-cmdline',      event = 'ModeChanged' },
+  {
+    'hrsh7th/cmp-nvim-lsp-signature-help',
+    event = 'InsertEnter',
+    dependencies = {
+      "neovim/nvim-lspconfig" }
+  },
+  {
+    'hrsh7th/cmp-nvim-lsp-document-symbol',
+    event = 'InsertEnter',
+    dependencies = {
+      "neovim/nvim-lspconfig" }
+  },
+  { 'hrsh7th/cmp-calc',     event = 'InsertEnter' },
+  { 'onsails/lspkind.nvim', event = 'InsertEnter' },
+  {
+    "L3MON4D3/LuaSnip",
+    -- follow latest release.
+    version = "1.*",
+    -- install jsregexp (optional!).
+    build = "make install_jsregexp",
+    event = 'InsertEnter',
+  },
   {
     'neovim/nvim-lspconfig',
     config = function()
@@ -895,7 +940,16 @@ require('lazy').setup({
 
       -- The following example advertise capabilities to `clangd`.
       local lspconfig = require('lspconfig')
-      -- rust -------------------------------------------------------
+
+      -- lsp setup --------------------------------------------------------------------
+      lspconfig.tsserver.setup {
+        capabilities = capabilities
+      }
+
+      lspconfig.gopls.setup {
+        capabilities = capabilities
+      }
+
       lspconfig.rust_analyzer.setup {
         settings = {
           ["rust-analyzer"] = {
@@ -907,11 +961,11 @@ require('lazy').setup({
         },
         capabilities = capabilities
       }
-      -- python -----------------------------------------------------
+
       lspconfig.pyright.setup {
         capabilities = capabilities
       }
-      -- lua --------------------------------------------------------
+
       lspconfig.lua_ls.setup {
         settings = {
           Lua = {
@@ -933,9 +987,10 @@ require('lazy').setup({
             },
           },
         },
+        capabilities = capabilities
       }
 
-      -- Global mappings.
+      -- Global mappings. -------------------------------------------------------
       -- See `:help vim.diagnostic.*` for documentation on any of the below functions
       keymap.set('n', '<space>e', vim.diagnostic.open_float)
       keymap.set('n', '[d', vim.diagnostic.goto_prev)
@@ -957,7 +1012,7 @@ require('lazy').setup({
           keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
           keymap.set('n', 'K', vim.lsp.buf.hover, opts)
           keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-          -- keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+          keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
           keymap.set('n', '<Leader>wa', vim.lsp.buf.add_workspace_folder, opts)
           keymap.set('n', '<Leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
           keymap.set('n', '<Leader>wl', function()

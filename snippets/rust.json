@@ -66,7 +66,7 @@
     "prefix": "in",
     "body": [
       "input! {",
-      "    ${1:#:el}: ${2:#:type}",
+      "    ${1:el}: ${2:type}",
       "}"
     ],
     "description": "input! macro"
@@ -74,49 +74,49 @@
   "p": {
     "prefix": "p",
     "body": [
-      "print!(\"${1:{}}\", ${2:#:x});"
+      "print!(\"${1:{}}\", ${2:x});"
     ],
     "description": "print! 1 expr"
   },
   "pl": {
     "prefix": "pl",
     "body": [
-      "println!(\"{}\", ${1:#:x});"
+      "println!(\"{}\", ${1:x});"
     ],
     "description": "println! 1 expr"
   },
   "ps": {
     "prefix": "ps",
     "body": [
-      "println!(\"${1:#:str}\");"
+      "println!(\"${1:str}\");"
     ],
     "description": "println! string"
   },
   "w": {
     "prefix": "w",
     "body": [
-      "write!(out, \"{}\", ${1:#:x}).unwrap();"
+      "write!(out, \"{}\", ${1:x}).unwrap();"
     ],
     "description": "write"
   },
   "wl": {
     "prefix": "wl",
     "body": [
-      "writeln!(out, \"{}\", ${1:#:x}).unwrap();"
+      "writeln!(out, \"{}\", ${1:x}).unwrap();"
     ],
     "description": "writeln"
   },
   "ws": {
     "prefix": "ws",
     "body": [
-      "writeln!(out, \"${1:#:str}\").unwrap();"
+      "writeln!(out, \"${1:str}\").unwrap();"
     ],
     "description": "writeln! string"
   },
   "fi": {
     "prefix": "fi",
     "body": [
-      "for &${1:#:e} in ${2:#:v}.iter() {",
+      "for &${1:e} in ${2:v}.iter() {",
       "    ",
       "},"
     ],
@@ -125,7 +125,7 @@
   "fe": {
     "prefix": "fe",
     "body": [
-      "for (i, &${1:#:e}) in ${2:#:v}.iter().enumerate() {",
+      "for (i, &${1:e}) in ${2:v}.iter().enumerate() {",
       "    ",
       "}"
     ],
