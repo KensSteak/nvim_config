@@ -375,9 +375,9 @@ require('lazy').setup({
           colored = false,
         },
         sections = {
-          lualine_a = { 'mode' },
-          lualine_b = { 'branch', 'diff' },
-          lualine_c = {
+          -- lualine_a = { 'mode' },
+          lualine_a = { 'branch', 'diff' },
+          lualine_b = {
             {
               'filename',
               path = 1,
@@ -392,6 +392,7 @@ require('lazy').setup({
               },
             }
           },
+          lualine_c = {},
           lualine_x = { 'filetype', 'encoding' },
           lualine_y = {
             {
