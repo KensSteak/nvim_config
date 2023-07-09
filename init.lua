@@ -87,7 +87,6 @@ require('lazy').setup({
     end,
   },
 
-
   {
     'olivercederborg/poimandres.nvim',
     lazy = false,    -- make sure we load this during startup if it is your main colorscheme
@@ -672,7 +671,7 @@ require('lazy').setup({
       keymap.set('n', '<leader>fh', builtin.help_tags, {})
       keymap.set('n', '<Leader>b', builtin.buffers, {})
 
-      local actions = require("telescope.actions")
+      -- local actions = require("telescope.actions")
       require("telescope").setup {
         defaults = {
           mappings = {
@@ -932,6 +931,7 @@ require('lazy').setup({
     -- install jsregexp (optional!).
     build = "make install_jsregexp",
     event = 'InsertEnter',
+    dependencies = { "rafamadriz/friendly-snippets" },
   },
   {
     'neovim/nvim-lspconfig',
