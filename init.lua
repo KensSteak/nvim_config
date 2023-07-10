@@ -49,6 +49,8 @@ keymap.set({ 'n', 'v' }, '<Leader>d', '"+d', { noremap = true })
 keymap.set('n', '<Leader>ss', ':split<Return><C-w>w')
 keymap.set('n', '<Leader>sv', ':vsplit<Return><C-w>w')
 
+keymap.set('n', '<Leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
+
 --------------------------------------------------------------------------------------
 -- plugin config ---------------------------------------------------------------------
 --------------------------------------------------------------------------------------
@@ -131,6 +133,17 @@ require('lazy').setup({
         vim.keymap.set('c', '<CR>', '<Plug>(kensaku-search-replace)<CR>')
       end
     end
+  },
+  {
+      "kdheepak/lazygit.nvim",
+      -- optional for floating window border decoration
+      cmd = 'LazyGit',
+      dependencies = {
+          "nvim-lua/plenary.nvim",
+      },
+      config = function()
+        -- keymap.set('n', '<Leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
+      end
   },
 
   {
