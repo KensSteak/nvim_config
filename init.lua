@@ -54,7 +54,7 @@ keymap.set('n', '<Leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
 
 -- neovim terminal mapping
 keymap.set("t", "<ESC>", "<C-\\><C-n>", { noremap = true })
-vim.api.nvim_create_autocmd( 'TermOpen', {
+vim.api.nvim_create_autocmd('TermOpen', {
   pattern = '',
   command = 'startinsert'
 })
@@ -692,13 +692,16 @@ require('lazy').setup({
       keymap.set('n', '<leader>fh', builtin.help_tags, {})
       keymap.set('n', '<Leader>b', builtin.buffers, {})
 
-      -- local actions = require("telescope.actions")
+      local actions = require("telescope.actions")
       require("telescope").setup {
         defaults = {
           mappings = {
             i = {
               -- ["<esc>"] = actions.close
             },
+            n = {
+              ["q"] = actions.close
+            }
           },
         },
       }
