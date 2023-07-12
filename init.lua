@@ -982,6 +982,11 @@ require('lazy').setup({
         capabilities = capabilities
       }
 
+      lspconfig.sourcekit.setup {
+        filetypes = { 'swift', 'objective-c', 'objective-cpp' },
+        capabilities = capabilities
+      }
+
       lspconfig.rust_analyzer.setup {
         settings = {
           ["rust-analyzer"] = {
