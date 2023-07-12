@@ -8,6 +8,7 @@ local keymap = require('vim.keymap')
 
 --------------------------------------------------------------------------------------
 -- base config -----------------------------------------------------------------------
+--------------------------------------------------------------------------------------
 
 opt.swapfile = false
 opt.number = true
@@ -50,6 +51,13 @@ keymap.set('n', '<Leader>ss', ':split<Return><C-w>w')
 keymap.set('n', '<Leader>sv', ':vsplit<Return><C-w>w')
 
 keymap.set('n', '<Leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
+
+-- neovim terminal mapping
+keymap.set("t", "<ESC>", "<C-\\><C-n>", { noremap = true })
+vim.api.nvim_create_autocmd( 'TermOpen', {
+  pattern = '',
+  command = 'startinsert'
+})
 
 --------------------------------------------------------------------------------------
 -- plugin config ---------------------------------------------------------------------
@@ -135,15 +143,15 @@ require('lazy').setup({
     end
   },
   {
-      "kdheepak/lazygit.nvim",
-      -- optional for floating window border decoration
-      cmd = 'LazyGit',
-      dependencies = {
-          "nvim-lua/plenary.nvim",
-      },
-      config = function()
-        -- keymap.set('n', '<Leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
-      end
+    "kdheepak/lazygit.nvim",
+    -- optional for floating window border decoration
+    cmd = 'LazyGit',
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    config = function()
+      -- keymap.set('n', '<Leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
+    end
   },
 
   {
