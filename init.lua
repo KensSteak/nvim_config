@@ -54,6 +54,13 @@ keymap.set('n', '<Leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
 
 -- neovim terminal mapping
 keymap.set("t", "<ESC>", "<C-\\><C-n>", { noremap = true })
+vim.api.nvim_create_user_command("T", ":split | wincmd j | resize 20 | terminal <args>", { nargs = "*" })
+
+-- Enter insert mode when switching to terminal
+vim.api.nvim_create_autocmd('TermOpen', {
+  pattern = '',
+  command = 'setlocal listchars= nonumber norelativenumber nocursorline',
+})
 vim.api.nvim_create_autocmd('TermOpen', {
   pattern = '',
   command = 'startinsert'
