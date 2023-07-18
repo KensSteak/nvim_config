@@ -31,13 +31,40 @@ opt.shiftwidth = 2
 opt.tabstop = 2
 opt.signcolumn = 'yes' --行数表示の横にLSP用の余白を常時表示
 
+-- 相対行番号のtoggle
+opt.relativenumber = true
+vim.api.nvim_create_autocmd('InsertEnter', {
+  pattern = '*',
+  callback = function()
+    opt.relativenumber = false
+  end
+})
+vim.api.nvim_create_autocmd('InsertLeave', {
+  pattern = '*',
+  callback = function()
+    opt.relativenumber = true
+  end
+})
+
+-- yank hilighted
+vim.api.nvim_create_autocmd(
+  'TextYankPost',
+  {
+    pattern = '*',
+    callback = function()
+      vim.highlight.on_yank({ timeout = 150 })
+    end
+  }
+)
+
 if vim.fn.exists('+termguicolors') == 1 and vim.env.TERM_PROGRAM ~= "Apple_Terminal" then
   opt.termguicolors = true
 end
 opt.laststatus = 2
 
+-- keymap
 map('n', 'Y', 'y$', { noremap = true })
-map('n', '<esc><esc>', ':<C-u>nohlsearch<CR>', { noremap = true, silent = true })
+map('n', '<Leader><Leader>', ':<C-u>nohlsearch<CR>', { noremap = true, silent = true })
 
 -- use clipboard <Leader> + ~
 map({ 'n', 'v' }, '<Leader>y', '"+y', { noremap = true })
@@ -51,6 +78,7 @@ map('n', '<Leader>ss', ':split<Return><C-w>w')
 map('n', '<Leader>sv', ':vsplit<Return><C-w>w')
 
 map('n', '<Leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
+
 
 -- neovim terminal mapping
 map("t", "<ESC>", "<C-\\><C-n>", { noremap = true })
@@ -86,6 +114,24 @@ opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
   {
+    -- 起動時にファイル名の引数なしで起動した場合に表示するスタートアップ画面を設定できる。
+    'goolord/alpha-nvim',
+    event = "VimEnter",
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require 'alpha'.setup(require 'alpha.themes.startify'.opts)
+    end
+  },
+  {
+    -- scrollbarの表示、hslensで検索結果のハイライト
+    'petertriho/nvim-scrollbar',
+    lazy = false,
+    dependencies = { 'kevinhwang91/nvim-hlslens' },
+    config = function()
+      require('scrollbar').setup()
+    end
+  },
+  {
     'lewis6991/impatient.nvim',
     lazy = false,    -- make sure we load this during startup if it is your main colorscheme
     priority = 1010, -- make sure to load this before all the other start plugins
@@ -96,8 +142,6 @@ require('lazy').setup({
 
   {
     "folke/tokyonight.nvim",
-    lazy = false,    -- make sure we load this during startup if it is your main colorscheme
-    priority = 1000, -- make sure to load this before all the other start plugins
     config = function()
       -- load the colorscheme here
       -- vim.cmd([[colorscheme tokyonight]])
@@ -106,8 +150,6 @@ require('lazy').setup({
 
   {
     'olivercederborg/poimandres.nvim',
-    lazy = false,    -- make sure we load this during startup if it is your main colorscheme
-    priority = 1000, -- make sure to load this before all the other start plugins
     config = function()
       require('poimandres').setup {
         -- leave this setup function empty for default config
@@ -119,10 +161,43 @@ require('lazy').setup({
   },
 
   {
+    "folke/todo-comments.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      require("todo-comments").setup {
+        -- your configuration comes here
+        -- or leave it empty to use the default settings
+        -- refer to the configuration section below
+      }
+      vim.keymap.set("n", "]t", function()
+        require("todo-comments").jump_next()
+      end, { desc = "Next todo comment" })
+
+      vim.keymap.set("n", "[t", function()
+        require("todo-comments").jump_prev()
+      end, { desc = "Previous todo comment" })
+
+      -- You can also specify a list of valid jump keywords
+
+      vim.keymap.set("n", "]t", function()
+        require("todo-comments").jump_next({ keywords = { "ERROR", "WARNING" } })
+      end, { desc = "Next error/warning todo comment" })
+    end,
+  },
+
+  {
     'mvllow/modes.nvim',
     tag = 'v0.2.0',
     config = function()
       require('modes').setup()
+    end
+  },
+
+  {
+    't9md/vim-quickhl',
+    config = function()
+      map({ 'n', 'x' }, '<Leader>m', '<Plug>(quickhl-manual-this)')
+      map({ 'n', 'x' }, '<Leader>M', '<Plug>(quickhl-manual-reset)')
     end
   },
 
@@ -161,16 +236,76 @@ require('lazy').setup({
     end
   },
 
+  -- {
+  --   "github/copilot.vim",
+  --   lazy = false, -- make sure we load this during startup if it is your main colorscheme
+  --   config = function()
+  --     -- Acceptの引数は、補完候補がないときのキーコード
+  --     vim.cmd("imap <silent><script><expr> <C-k> copilot#Accept(\"\")")
+  --     vim.g.copilot_no_tab_map = true
+  --
+  --     map('i', '<C-f>', '<Plug>(copilot-next)', { silent = true })
+  --     map('i', '<C-b>', '<Plug>(copilot-previous)', { silent = true })
+  --   end,
+  -- },
   {
-    "github/copilot.vim",
-    lazy = false, -- make sure we load this during startup if it is your main colorscheme
+    "zbirenbaum/copilot-cmp",
+    event = "InsertEnter",
+    dependencies = { 'zbirenbaum/copilot.lua' },
     config = function()
-      -- Acceptの引数は、補完候補がないときのキーコード
-      vim.cmd("imap <silent><script><expr> <C-k> copilot#Accept(\"\")")
-      vim.g.copilot_no_tab_map = true
-
-      map('i', '<C-f>', '<Plug>(copilot-next)', { silent = true })
-      map('i', '<C-b>', '<Plug>(copilot-previous)', { silent = true })
+      require("copilot_cmp").setup(
+      -- suggestion = { enabled = false },
+      -- panel = { enabled = false },
+      )
+    end
+  },
+  {
+    "zbirenbaum/copilot.lua",
+    event = "InsertEnter",
+    config = function()
+      require('copilot').setup({
+        -- panel = {
+        --   enabled = true,
+        --   auto_refresh = false,
+        --   keymap = {
+        --     jump_prev = "[[",
+        --     jump_next = "]]",
+        --     accept = "<CR>",
+        --     refresh = "gr",
+        --     open = "<M-CR>"
+        --   },
+        --   layout = {
+        --     position = "bottom", -- | top | left | right
+        --     ratio = 0.4
+        --   },
+        -- },
+        -- suggestion = {
+        --   enabled = true,
+        --   auto_trigger = false,
+        --   debounce = 75,
+        --   keymap = {
+        --     accept = "<M-l>",
+        --     accept_word = false,
+        --     accept_line = false,
+        --     next = "<M-]>",
+        --     prev = "<M-[>",
+        --     dismiss = "<C-]>",
+        --   },
+        -- },
+        -- filetypes = {
+        --   yaml = false,
+        --   markdown = false,
+        --   help = false,
+        --   gitcommit = false,
+        --   gitrebase = false,
+        --   hgcommit = false,
+        --   svn = false,
+        --   cvs = false,
+        --   ["."] = false,
+        -- },
+        -- copilot_node_command = 'node', -- Node.js version must be > 16.x
+        -- server_opts_overrides = {},
+      })
     end,
   },
 
@@ -218,6 +353,27 @@ require('lazy').setup({
         },
       }
     end,
+  },
+
+  {
+    'nvim-treesitter/nvim-treesitter-context',
+    lazy = false,
+    config = function()
+      require 'treesitter-context'.setup {
+        enable = true,            -- Enable this plugin (Can be enabled/disabled later via commands)
+        max_lines = 0,            -- How many lines the window should span. Values <= 0 mean no limit.
+        min_window_height = 0,    -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+        line_numbers = true,
+        multiline_threshold = 20, -- Maximum number of lines to collapse for a single context line
+        trim_scope = 'outer',     -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
+        mode = 'cursor',          -- Line used to calculate context. Choices: 'cursor', 'topline'
+        -- Separator between context and content. Should be a single character string, like '-'.
+        -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
+        separator = nil,
+        zindex = 20,     -- The Z-index of the context window
+        on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
+      }
+    end
   },
 
   {
@@ -305,6 +461,7 @@ require('lazy').setup({
           map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
         end
       }
+      require("scrollbar.handlers.gitsigns").setup()
     end
   },
 
@@ -419,7 +576,11 @@ require('lazy').setup({
               },
             }
           },
-          lualine_c = {},
+          lualine_c = {
+            'navic',
+            color_correction = nil, -- "static" or "dynamic". モードによって背景色を帰る場合は "dynamic" を指定
+            navic_opts = nil        -- lua table with same format as setup's option. All options except "lsp" options take effect when set here.
+          },
           lualine_x = { 'filetype', 'encoding' },
           lualine_y = {
             {
@@ -507,134 +668,130 @@ require('lazy').setup({
       -- :BarbarDisable - very bad command, should never be used
       --
       require("barbar").setup {
-        -- WARN: do not copy everything below into your config!
-        --       It is just an example of what configuration options there are.
-        --       The defaults are suitable for most people.
-
-        -- Enable/disable animations
-        animation = true,
-
-        -- Enable/disable auto-hiding the tab bar when there is a single buffer
-        auto_hide = false,
-
-        -- Enable/disable current/total tabpages indicator (top right corner)
-        tabpages = false,
-
-        -- Enables/disable clickable tabs
-        --  - left-click: go to buffer
-        --  - middle-click: delete buffer
-        clickable = true,
-
-        -- Excludes buffers from the tabline
-        exclude_ft = {},
-        exclude_name = {},
-
-        -- A buffer to this direction will be focused (if it exists) when closing the current buffer.
-        -- Valid options are 'left' (the default), 'previous', and 'right'
-        focus_on_close = 'left',
-
-        -- Hide inactive buffers and file extensions. Other options are `alternate`, `current`, and `visible`.
-        -- hide = {extensions = true, inactive = true},
-
-        -- Disable highlighting alternate buffers
-        highlight_alternate = false,
-
-        -- Disable highlighting file icons in inactive buffers
-        highlight_inactive_file_icons = false,
-
-        -- Enable highlighting visible buffers
-        highlight_visible = true,
-
-        icons = {
-          -- Configure the base icons on the bufferline.
-          -- Valid options to display the buffer index and -number are `true`, 'superscript' and 'subscript'
-          buffer_index = false,
-          buffer_number = false,
-          button = '',
-          -- Enables / disables diagnostic symbols
-          diagnostics = {
-            [vim.diagnostic.severity.ERROR] = { enabled = true, icon = 'ﬀ' },
-            [vim.diagnostic.severity.WARN] = { enabled = true },
-            [vim.diagnostic.severity.INFO] = { enabled = false },
-            [vim.diagnostic.severity.HINT] = { enabled = true },
-          },
-          gitsigns = {
-            added = { enabled = true, icon = '+' },
-            changed = { enabled = true, icon = '~' },
-            deleted = { enabled = true, icon = '-' },
-          },
-          filetype = {
-            -- Sets the icon's highlight group.
-            -- If false, will use nvim-web-devicons colors
-            custom_colors = false,
-
-            -- Requires `nvim-web-devicons` if `true`
-            enabled = true,
-          },
-          separator = { left = '▎', right = '' },
-
-          -- If true, add an additional separator at the end of the buffer list
-          separator_at_end = true,
-
-          -- Configure the icons on the bufferline when modified or pinned.
-          -- Supports all the base icon options.
-          modified = { button = '●' },
-          pinned = { button = '', filename = true },
-
-          -- Use a preconfigured buffer appearance— can be 'default', 'powerline', or 'slanted'
-          preset = 'default',
-
-          -- Configure the icons on the bufferline based on the visibility of a buffer.
-          -- Supports all the base icon options, plus `modified` and `pinned`.
-          alternate = { filetype = { enabled = false } },
-          current = { buffer_index = false },
-          inactive = { button = '×' },
-          visible = { modified = { buffer_number = false } },
-        },
-
-        -- If true, new buffers will be inserted at the start/end of the list.
-        -- Default is to insert after current buffer.
-        insert_at_end = false,
-        insert_at_start = false,
-
-        -- Sets the maximum padding width with which to surround each tab
-        maximum_padding = 1,
-
-        -- Sets the minimum padding width with which to surround each tab
-        minimum_padding = 1,
-
-        -- Sets the maximum buffer name length.
-        maximum_length = 30,
-
-        -- Sets the minimum buffer name length.
-        minimum_length = 0,
-
-        -- If set, the letters for each buffer in buffer-pick mode will be
-        -- assigned based on their name. Otherwise or in case all letters are
-        -- already assigned, the behavior is to assign letters in order of
-        -- usability (see order below)
-        semantic_letters = true,
-
-        -- Set the filetypes which barbar will offset itself for
-        sidebar_filetypes = {
-          -- Use the default values: {event = 'BufWinLeave', text = nil}
-          NvimTree = true,
-          -- Or, specify the text used for the offset:
-          undotree = { text = 'undotree' },
-          -- Or, specify the event which the sidebar executes when leaving:
-          ['neo-tree'] = { event = 'BufWipeout' },
-          -- Or, specify both
-          Outline = { event = 'BufWinLeave', text = 'symbols-outline' },
-        },
-
-        -- New buffer letters are assigned in this order. This order is
-        -- optimal for the qwerty keyboard layout but might need adjustment
-        -- for other layouts.
-        letters = 'asdfjkl;ghnmxcvbziowerutyqpASDFJKLGHNMXCVBZIOWERUTYQP',
-
-        -- Sets the name of unnamed buffers. By default format is "[Buffer X]"
-        -- where X is the buffer number. But only a static string is accepted here.
-        no_name_title = nil,
+        -- -- Enable/disable animations
+        -- animation = true,
+        --
+        -- -- Enable/disable auto-hiding the tab bar when there is a single buffer
+        -- auto_hide = false,
+        --
+        -- -- Enable/disable current/total tabpages indicator (top right corner)
+        -- tabpages = false,
+        --
+        -- -- Enables/disable clickable tabs
+        -- --  - left-click: go to buffer
+        -- --  - middle-click: delete buffer
+        -- clickable = true,
+        --
+        -- -- Excludes buffers from the tabline
+        -- exclude_ft = {},
+        -- exclude_name = {},
+        --
+        -- -- A buffer to this direction will be focused (if it exists) when closing the current buffer.
+        -- -- Valid options are 'left' (the default), 'previous', and 'right'
+        -- focus_on_close = 'left',
+        --
+        -- -- Hide inactive buffers and file extensions. Other options are `alternate`, `current`, and `visible`.
+        -- -- hide = {extensions = true, inactive = true},
+        --
+        -- -- Disable highlighting alternate buffers
+        -- highlight_alternate = false,
+        --
+        -- -- Disable highlighting file icons in inactive buffers
+        -- highlight_inactive_file_icons = false,
+        --
+        -- -- Enable highlighting visible buffers
+        -- highlight_visible = true,
+        --
+        -- icons = {
+        --   -- Configure the base icons on the bufferline.
+        --   -- Valid options to display the buffer index and -number are `true`, 'superscript' and 'subscript'
+        --   buffer_index = false,
+        --   buffer_number = false,
+        --   button = '',
+        --   -- Enables / disables diagnostic symbols
+        --   diagnostics = {
+        --     [vim.diagnostic.severity.ERROR] = { enabled = true, icon = 'ﬀ' },
+        --     [vim.diagnostic.severity.WARN] = { enabled = true },
+        --     [vim.diagnostic.severity.INFO] = { enabled = false },
+        --     [vim.diagnostic.severity.HINT] = { enabled = true },
+        --   },
+        --   gitsigns = {
+        --     added = { enabled = true, icon = '+' },
+        --     changed = { enabled = true, icon = '~' },
+        --     deleted = { enabled = true, icon = '-' },
+        --   },
+        --   filetype = {
+        --     -- Sets the icon's highlight group.
+        --     -- If false, will use nvim-web-devicons colors
+        --     custom_colors = false,
+        --
+        --     -- Requires `nvim-web-devicons` if `true`
+        --     enabled = true,
+        --   },
+        --   separator = { left = '▎', right = '' },
+        --
+        --   -- If true, add an additional separator at the end of the buffer list
+        --   separator_at_end = true,
+        --
+        --   -- Configure the icons on the bufferline when modified or pinned.
+        --   -- Supports all the base icon options.
+        --   modified = { button = '●' },
+        --   pinned = { button = '', filename = true },
+        --
+        --   -- Use a preconfigured buffer appearance— can be 'default', 'powerline', or 'slanted'
+        --   preset = 'default',
+        --
+        --   -- Configure the icons on the bufferline based on the visibility of a buffer.
+        --   -- Supports all the base icon options, plus `modified` and `pinned`.
+        --   alternate = { filetype = { enabled = false } },
+        --   current = { buffer_index = false },
+        --   inactive = { button = '×' },
+        --   visible = { modified = { buffer_number = false } },
+        -- },
+        --
+        -- -- If true, new buffers will be inserted at the start/end of the list.
+        -- -- Default is to insert after current buffer.
+        -- insert_at_end = false,
+        -- insert_at_start = false,
+        --
+        -- -- Sets the maximum padding width with which to surround each tab
+        -- maximum_padding = 1,
+        --
+        -- -- Sets the minimum padding width with which to surround each tab
+        -- minimum_padding = 1,
+        --
+        -- -- Sets the maximum buffer name length.
+        -- maximum_length = 30,
+        --
+        -- -- Sets the minimum buffer name length.
+        -- minimum_length = 0,
+        --
+        -- -- If set, the letters for each buffer in buffer-pick mode will be
+        -- -- assigned based on their name. Otherwise or in case all letters are
+        -- -- already assigned, the behavior is to assign letters in order of
+        -- -- usability (see order below)
+        -- semantic_letters = true,
+        --
+        -- -- Set the filetypes which barbar will offset itself for
+        -- sidebar_filetypes = {
+        --   -- Use the default values: {event = 'BufWinLeave', text = nil}
+        --   NvimTree = true,
+        --   -- Or, specify the text used for the offset:
+        --   undotree = { text = 'undotree' },
+        --   -- Or, specify the event which the sidebar executes when leaving:
+        --   ['neo-tree'] = { event = 'BufWipeout' },
+        --   -- Or, specify both
+        --   Outline = { event = 'BufWinLeave', text = 'symbols-outline' },
+        -- },
+        --
+        -- -- New buffer letters are assigned in this order. This order is
+        -- -- optimal for the qwerty keyboard layout but might need adjustment
+        -- -- for other layouts.
+        -- letters = 'asdfjkl;ghnmxcvbziowerutyqpASDFJKLGHNMXCVBZIOWERUTYQP',
+        --
+        -- -- Sets the name of unnamed buffers. By default format is "[Buffer X]"
+        -- -- where X is the buffer number. But only a static string is accepted here.
+        -- no_name_title = nil,
       }
     end
   },
@@ -676,6 +833,57 @@ require('lazy').setup({
       }
     end
   },
+  {
+    'RRethy/vim-illuminate',
+    lazy = false,
+    config = function()
+      -- default configuration
+      require('illuminate').configure({
+        -- providers: provider used to get references in the buffer, ordered by priority
+        providers = {
+          'lsp',
+          'treesitter',
+          'regex',
+        },
+        -- delay: delay in milliseconds
+        delay = 100,
+        -- filetype_overrides: filetype specific overrides.
+        -- The keys are strings to represent the filetype while the values are tables that
+        -- supports the same keys passed to .configure except for filetypes_denylist and filetypes_allowlist
+        -- filetype_overrides = {},
+        -- filetypes_denylist: filetypes to not illuminate, this overrides filetypes_allowlist
+        -- filetypes_denylist = { },
+        -- filetypes_allowlist: filetypes to illuminate, this is overriden by filetypes_denylist
+        -- filetypes_allowlist = {},
+        -- modes_denylist: modes to not illuminate, this overrides modes_allowlist
+        -- See `:help mode()` for possible values
+        -- modes_denylist = {},
+        -- modes_allowlist: modes to illuminate, this is overriden by modes_denylist
+        -- See `:help mode()` for possible values
+        -- modes_allowlist = {},
+        -- providers_regex_syntax_denylist: syntax to not illuminate, this overrides providers_regex_syntax_allowlist
+        -- Only applies to the 'regex' provider
+        -- Use :echom synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
+        -- providers_regex_syntax_denylist = {},
+        -- providers_regex_syntax_allowlist: syntax to illuminate, this is overriden by providers_regex_syntax_denylist
+        -- Only applies to the 'regex' provider
+        -- Use :echom synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
+        -- providers_regex_syntax_allowlist = {},
+        -- under_cursor: whether or not to illuminate under the cursor
+        -- under_cursor = true,
+        -- large_file_cutoff: number of lines at which to use large_file_config
+        -- The `under_cursor` option is disabled when this cutoff is hit
+        -- large_file_cutoff = nil,
+        -- large_file_config: config to use for large files (based on large_file_cutoff).
+        -- Supports the same keys passed to .configure
+        -- If nil, vim-illuminate will be disabled for large files.
+        -- large_file_overrides = nil,
+        -- min_count_to_highlight: minimum number of matches required to perform highlighting
+        -- min_count_to_highlight = 1,
+      })
+    end
+  },
+
 
   {
     "nvim-telescope/telescope-frecency.nvim",
@@ -807,7 +1015,10 @@ require('lazy').setup({
     'kevinhwang91/nvim-hlslens',
     event = 'BufEnter',
     config = function()
-      require('hlslens').setup()
+      -- require('hlslens').setup()
+      require("scrollbar.handlers.search").setup({
+        -- hlslens config overrides
+      })
       local kopts = { noremap = true, silent = true }
 
       vim.api.nvim_set_keymap('n', 'n',
@@ -838,6 +1049,14 @@ require('lazy').setup({
       local cmp = require('cmp')
       local lspkind = require('lspkind')
       local luasnip = require('luasnip')
+
+      lspkind.init({
+        symbol_map = {
+          Copilot = "",
+        },
+      })
+
+      vim.api.nvim_set_hl(0, "CmpItemKindCopilot", { fg = "#6CC644" })
 
       -- load snippets from path/of/your/nvim/config/my-cool-snippets
       -- luasnip.loaders.from_vscode.lazy_load({ paths = { os.getenv("HOME") .. "/Library/Application Support/Code/User/snippets" } })
@@ -902,6 +1121,7 @@ require('lazy').setup({
         },
 
         sources = cmp.config.sources({
+            { name = 'copilot' },
             { name = 'nvim_lsp' },
             { name = 'luasnip' },
             { name = 'nvim_lsp_signature_help' },
@@ -1036,6 +1256,53 @@ require('lazy').setup({
     end
   },
   {
+    "SmiteshP/nvim-navic",
+    dependencies = { "neovim/nvim-lspconfig" },
+    config = function()
+      require('nvim-navic').setup {
+        icons = {
+          File          = "󰈙 ",
+          Module        = " ",
+          Namespace     = "󰌗 ",
+          Package       = " ",
+          Class         = "󰌗 ",
+          Method        = "󰆧 ",
+          Property      = " ",
+          Field         = " ",
+          Constructor   = " ",
+          Enum          = "󰕘",
+          Interface     = "󰕘",
+          Function      = "󰊕 ",
+          Variable      = "󰆧 ",
+          Constant      = "󰏿 ",
+          String        = "󰀬 ",
+          Number        = "󰎠 ",
+          Boolean       = "◩ ",
+          Array         = "󰅪 ",
+          Object        = "󰅩 ",
+          Key           = "󰌋 ",
+          Null          = "󰟢 ",
+          EnumMember    = " ",
+          Struct        = "󰌗 ",
+          Event         = " ",
+          Operator      = "󰆕 ",
+          TypeParameter = "󰊄 ",
+        },
+        lsp = {
+          auto_attach = false,
+          preference = nil,
+        },
+        highlight = false,
+        separator = " > ",
+        depth_limit = 0,
+        depth_limit_indicator = "..",
+        safe_output = true,
+        lazy_update_context = false,
+        click = false
+      }
+    end
+  },
+  {
     'neovim/nvim-lspconfig',
     config = function()
       -- The nvim-cmp almost supports LSP's capabilities so You should advertise it to LSP servers..
@@ -1044,21 +1311,34 @@ require('lazy').setup({
       -- The following example advertise capabilities to `clangd`.
       local lspconfig = require('lspconfig')
 
+      -- on attach
+      local navic = require('nvim-navic')
+      local on_attach = function(client, bufnr)
+        if client.server_capabilities.documentSymbolProvider then
+          navic.attach(client, bufnr)
+        end
+      end
+
+
       -- lsp setup --------------------------------------------------------------------
       lspconfig.tsserver.setup {
+        on_attach = on_attach,
         capabilities = capabilities
       }
 
       lspconfig.gopls.setup {
+        on_attach = on_attach,
         capabilities = capabilities
       }
 
       lspconfig.sourcekit.setup {
+        on_attach = on_attach,
         filetypes = { 'swift', 'objective-c', 'objective-cpp' },
         capabilities = capabilities
       }
 
       lspconfig.rust_analyzer.setup {
+        on_attach = on_attach,
         settings = {
           ["rust-analyzer"] = {
             -- enable clippy on save
@@ -1071,10 +1351,12 @@ require('lazy').setup({
       }
 
       lspconfig.pyright.setup {
+        on_attach = on_attach,
         capabilities = capabilities
       }
 
       lspconfig.lua_ls.setup {
+        on_attach = on_attach,
         settings = {
           Lua = {
             runtime = {
