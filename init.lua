@@ -145,7 +145,7 @@ require('lazy').setup({
     lazy = false,
     config = function()
       if vim.fn.exepath('deno') ~= '' then
-        vim.map('c', '<CR>', '<Plug>(kensaku-search-replace)<CR>')
+        map('c', '<CR>', '<Plug>(kensaku-search-replace)<CR>')
       end
     end
   },
