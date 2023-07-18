@@ -4,7 +4,7 @@ vim.cmd('filetype plugin indent off')
 vim.g.mapleader = " "
 
 local opt = vim.opt
-local keymap = require('vim.keymap')
+local map = require('vim.keymap').set
 
 --------------------------------------------------------------------------------------
 -- base config -----------------------------------------------------------------------
@@ -36,24 +36,24 @@ if vim.fn.exists('+termguicolors') == 1 and vim.env.TERM_PROGRAM ~= "Apple_Termi
 end
 opt.laststatus = 2
 
-keymap.set('n', 'Y', 'y$', { noremap = true })
-keymap.set('n', '<esc><esc>', ':<C-u>nohlsearch<CR>', { noremap = true, silent = true })
+map('n', 'Y', 'y$', { noremap = true })
+map('n', '<esc><esc>', ':<C-u>nohlsearch<CR>', { noremap = true, silent = true })
 
 -- use clipboard <Leader> + ~
-keymap.set({ 'n', 'v' }, '<Leader>y', '"+y', { noremap = true })
-keymap.set('n', '<Leader>Y', '"+y$', { noremap = true })
-keymap.set({ 'n', 'v' }, '<Leader>p', '"+p', { noremap = true })
-keymap.set('n', '<Leader>P', '"+P', { noremap = true })
-keymap.set({ 'n', 'v' }, '<Leader>d', '"+d', { noremap = true })
+map({ 'n', 'v' }, '<Leader>y', '"+y', { noremap = true })
+map('n', '<Leader>Y', '"+y$', { noremap = true })
+map({ 'n', 'v' }, '<Leader>p', '"+p', { noremap = true })
+map('n', '<Leader>P', '"+P', { noremap = true })
+map({ 'n', 'v' }, '<Leader>d', '"+d', { noremap = true })
 
 -- split window
-keymap.set('n', '<Leader>ss', ':split<Return><C-w>w')
-keymap.set('n', '<Leader>sv', ':vsplit<Return><C-w>w')
+map('n', '<Leader>ss', ':split<Return><C-w>w')
+map('n', '<Leader>sv', ':vsplit<Return><C-w>w')
 
-keymap.set('n', '<Leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
+map('n', '<Leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
 
 -- neovim terminal mapping
-keymap.set("t", "<ESC>", "<C-\\><C-n>", { noremap = true })
+map("t", "<ESC>", "<C-\\><C-n>", { noremap = true })
 vim.api.nvim_create_user_command("T", ":split | wincmd j | resize 20 | terminal <args>", { nargs = "*" })
 
 -- Enter insert mode when switching to terminal
@@ -145,7 +145,7 @@ require('lazy').setup({
     lazy = false,
     config = function()
       if vim.fn.exepath('deno') ~= '' then
-        vim.keymap.set('c', '<CR>', '<Plug>(kensaku-search-replace)<CR>')
+        vim.map('c', '<CR>', '<Plug>(kensaku-search-replace)<CR>')
       end
     end
   },
@@ -157,7 +157,7 @@ require('lazy').setup({
       "nvim-lua/plenary.nvim",
     },
     config = function()
-      -- keymap.set('n', '<Leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
+      -- map('n', '<Leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
     end
   },
 
@@ -169,8 +169,8 @@ require('lazy').setup({
       vim.cmd("imap <silent><script><expr> <C-k> copilot#Accept(\"\")")
       vim.g.copilot_no_tab_map = true
 
-      keymap.set('i', '<C-f>', '<Plug>(copilot-next)', { silent = true })
-      keymap.set('i', '<C-b>', '<Plug>(copilot-previous)', { silent = true })
+      map('i', '<C-f>', '<Plug>(copilot-next)', { silent = true })
+      map('i', '<C-b>', '<Plug>(copilot-previous)', { silent = true })
     end,
   },
 
@@ -267,10 +267,10 @@ require('lazy').setup({
         on_attach                    = function(bufnr)
           local gs = package.loaded.gitsigns
 
-          local function map(mode, l, r, opts)
+          local function lmap(mode, l, r, opts)
             opts = opts or {}
             opts.buffer = bufnr
-            keymap.set(mode, l, r, opts)
+            map(mode, l, r, opts)
           end
 
           -- Navigation
@@ -287,19 +287,19 @@ require('lazy').setup({
           end, { expr = true })
 
           -- Actions
-          map('n', '<leader>hs', gs.stage_hunk)
-          map('n', '<leader>hr', gs.reset_hunk)
-          map('v', '<leader>hs', function() gs.stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
-          map('v', '<leader>hr', function() gs.reset_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
-          map('n', '<leader>hS', gs.stage_buffer)
-          map('n', '<leader>hu', gs.undo_stage_hunk)
-          map('n', '<leader>hR', gs.reset_buffer)
-          map('n', '<leader>hp', gs.preview_hunk)
-          map('n', '<leader>hb', function() gs.blame_line { full = true } end)
-          map('n', '<leader>tb', gs.toggle_current_line_blame)
-          map('n', '<leader>hd', gs.diffthis)
-          map('n', '<leader>hD', function() gs.diffthis('~') end)
-          map('n', '<leader>td', gs.toggle_deleted)
+          lmap('n', '<leader>hs', gs.stage_hunk)
+          lmap('n', '<leader>hr', gs.reset_hunk)
+          lmap('v', '<leader>hs', function() gs.stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
+          lmap('v', '<leader>hr', function() gs.reset_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
+          lmap('n', '<leader>hS', gs.stage_buffer)
+          lmap('n', '<leader>hu', gs.undo_stage_hunk)
+          lmap('n', '<leader>hR', gs.reset_buffer)
+          lmap('n', '<leader>hp', gs.preview_hunk)
+          lmap('n', '<leader>hb', function() gs.blame_line { full = true } end)
+          lmap('n', '<leader>tb', gs.toggle_current_line_blame)
+          lmap('n', '<leader>hd', gs.diffthis)
+          lmap('n', '<leader>hD', function() gs.diffthis('~') end)
+          lmap('n', '<leader>td', gs.toggle_deleted)
 
           -- Text object
           map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
@@ -452,13 +452,13 @@ require('lazy').setup({
   },
 
   {
-    'kyazdani42/nvim-web-devicons',
+    'nvim-tree/nvim-web-devicons',
     lazy = false,
   },
 
   {
     'romgrk/barbar.nvim',
-    dependencies = { 'kyazdani42/nvim-web-devicons', 'lewis6991/gitsigns.nvim' },
+    dependencies = { 'nvim-tree/nvim-web-devicons', 'lewis6991/gitsigns.nvim' },
     lazy = false,
     config = function()
       vim.g.barbar_auto_setup = false
@@ -466,26 +466,26 @@ require('lazy').setup({
       local opts = { noremap = true, silent = true }
 
       -- Move to previous/next
-      keymap.set('n', '<A-k>', '<Cmd>BufferPrevious<CR>', opts)
-      keymap.set('n', '<A-j>', '<Cmd>BufferNext<CR>', opts)
+      map('n', '<A-k>', '<Cmd>BufferPrevious<CR>', opts)
+      map('n', '<A-j>', '<Cmd>BufferNext<CR>', opts)
       -- Re-order to previous/next
-      keymap.set('n', '<A-<>', '<Cmd>BufferMovePrevious<CR>', opts)
-      keymap.set('n', '<A->>', '<Cmd>BufferMoveNext<CR>', opts)
+      map('n', '<A-<>', '<Cmd>BufferMovePrevious<CR>', opts)
+      map('n', '<A->>', '<Cmd>BufferMoveNext<CR>', opts)
       -- Goto buffer in position...
-      keymap.set('n', '<A-1>', '<Cmd>BufferGoto 1<CR>', opts)
-      keymap.set('n', '<A-2>', '<Cmd>BufferGoto 2<CR>', opts)
-      keymap.set('n', '<A-3>', '<Cmd>BufferGoto 3<CR>', opts)
-      keymap.set('n', '<A-4>', '<Cmd>BufferGoto 4<CR>', opts)
-      keymap.set('n', '<A-5>', '<Cmd>BufferGoto 5<CR>', opts)
-      keymap.set('n', '<A-6>', '<Cmd>BufferGoto 6<CR>', opts)
-      keymap.set('n', '<A-7>', '<Cmd>BufferGoto 7<CR>', opts)
-      keymap.set('n', '<A-8>', '<Cmd>BufferGoto 8<CR>', opts)
-      keymap.set('n', '<A-9>', '<Cmd>BufferGoto 9<CR>', opts)
-      keymap.set('n', '<A-0>', '<Cmd>BufferLast<CR>', opts)
+      map('n', '<A-1>', '<Cmd>BufferGoto 1<CR>', opts)
+      map('n', '<A-2>', '<Cmd>BufferGoto 2<CR>', opts)
+      map('n', '<A-3>', '<Cmd>BufferGoto 3<CR>', opts)
+      map('n', '<A-4>', '<Cmd>BufferGoto 4<CR>', opts)
+      map('n', '<A-5>', '<Cmd>BufferGoto 5<CR>', opts)
+      map('n', '<A-6>', '<Cmd>BufferGoto 6<CR>', opts)
+      map('n', '<A-7>', '<Cmd>BufferGoto 7<CR>', opts)
+      map('n', '<A-8>', '<Cmd>BufferGoto 8<CR>', opts)
+      map('n', '<A-9>', '<Cmd>BufferGoto 9<CR>', opts)
+      map('n', '<A-0>', '<Cmd>BufferLast<CR>', opts)
       -- Pin/unpin buffer
-      keymap.set('n', '<A-p>', '<Cmd>BufferPin<CR>', opts)
+      map('n', '<A-p>', '<Cmd>BufferPin<CR>', opts)
       -- Close buffer
-      keymap.set('n', '<Leader>k', '<Cmd>BufferClose<CR>', opts)
+      map('n', '<Leader>k', '<Cmd>BufferClose<CR>', opts)
       -- Wipeout buffer
       --                 :BufferWipeout
       -- Close commands
@@ -495,12 +495,12 @@ require('lazy').setup({
       --                 :BufferCloseBuffersLeft
       --                 :BufferCloseBuffersRight
       -- Magic buffer-picking mode
-      keymap.set('n', '<C-p>', '<Cmd>BufferPick<CR>', opts)
+      map('n', '<C-p>', '<Cmd>BufferPick<CR>', opts)
       -- Sort automatically by...
-      -- keymap.set('n', '<Leader>bb', '<Cmd>BufferOrderByBufferNumber<CR>', opts)
-      -- keymap.set('n', '<Leader>bd', '<Cmd>BufferOrderByDirectory<CR>', opts)
-      -- keymap.set('n', '<Leader>bl', '<Cmd>BufferOrderByLanguage<CR>', opts)
-      -- keymap.set('n', '<Leader>bw', '<Cmd>BufferOrderByWindowNumber<CR>', opts)
+      -- map('n', '<Leader>bb', '<Cmd>BufferOrderByBufferNumber<CR>', opts)
+      -- map('n', '<Leader>bd', '<Cmd>BufferOrderByDirectory<CR>', opts)
+      -- map('n', '<Leader>bl', '<Cmd>BufferOrderByLanguage<CR>', opts)
+      -- map('n', '<Leader>bw', '<Cmd>BufferOrderByWindowNumber<CR>', opts)
 
       -- Other:
       -- :BarbarEnable - enables barbar (enabled by default)
@@ -692,12 +692,12 @@ require('lazy').setup({
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
       local builtin = require('telescope.builtin')
-      keymap.set('n', '<leader>ff', builtin.find_files, {})
-      keymap.set('n', '<leader>fr', builtin.live_grep, {})
-      keymap.set('n', '<leader>fg', builtin.git_status, {})
-      keymap.set('n', '<leader>fb', builtin.buffers, {})
-      keymap.set('n', '<leader>fh', builtin.help_tags, {})
-      keymap.set('n', '<Leader>b', builtin.buffers, {})
+      map('n', '<leader>ff', builtin.find_files, {})
+      map('n', '<leader>fr', builtin.live_grep, {})
+      map('n', '<leader>fg', builtin.git_status, {})
+      map('n', '<leader>fb', builtin.buffers, {})
+      map('n', '<leader>fh', builtin.help_tags, {})
+      map('n', '<Leader>b', builtin.buffers, {})
 
       local actions = require("telescope.actions")
       require("telescope").setup {
@@ -842,9 +842,9 @@ require('lazy').setup({
       -- load snippets from path/of/your/nvim/config/my-cool-snippets
       -- luasnip.loaders.from_vscode.lazy_load({ paths = { os.getenv("HOME") .. "/Library/Application Support/Code/User/snippets" } })
       require('luasnip.loaders.from_vscode').lazy_load({ paths = { os.getenv('HOME') .. '/.config/nvim/snippets/' } })
-      keymap.set({ 'i', 's' }, '<C-l>', '<Plug>luasnip-expand-or-jump', { silent = true, noremap = false })
-      keymap.set({ 'i', 's' }, '<A-h>', function() luasnip.jump(-1) end, { expr = true, noremap = false })
-      keymap.set({ 'i', 's' }, '<A-l>', function() luasnip.jump(1) end, { expr = true, noremap = false })
+      map({ 'i', 's' }, '<C-l>', '<Plug>luasnip-expand-or-jump', { silent = true, noremap = false })
+      map({ 'i', 's' }, '<A-h>', function() luasnip.jump(-1) end, { expr = true, noremap = false })
+      map({ 'i', 's' }, '<A-l>', function() luasnip.jump(1) end, { expr = true, noremap = false })
 
       cmp.setup({
         snippet = {
@@ -906,6 +906,7 @@ require('lazy').setup({
             { name = 'luasnip' },
             { name = 'nvim_lsp_signature_help' },
             { name = 'calc' },
+            { name = 'treesitter' },
           },
           {
             { name = 'buffer', keyword_length = 2 },
@@ -940,6 +941,7 @@ require('lazy').setup({
   { 'hrsh7th/cmp-buffer',       event = 'InsertEnter' },
   { 'hrsh7th/cmp-path',         event = 'InsertEnter' },
   { 'saadparwaiz1/cmp_luasnip', event = 'InsertEnter' },
+  { 'ray-x/cmp-treesitter',     event = 'InsertEnter' },
   { 'hrsh7th/cmp-cmdline',      event = 'ModeChanged' },
   {
     'hrsh7th/cmp-nvim-lsp-signature-help',
@@ -963,6 +965,66 @@ require('lazy').setup({
     build = "make install_jsregexp",
     event = 'InsertEnter',
     dependencies = { "rafamadriz/friendly-snippets" },
+  },
+  {
+    -- LSP向けのdiagnosticへのJumpをサポートする
+    "folke/trouble.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    opts = {
+      map("n", "<C-t>", "<cmd>Trouble<cr>", { silent = true, noremap = false }),
+
+      -- your configuration comes here
+      -- or leave it empty to use the default settings
+      -- refer to the configuration section below
+      position = "bottom",          -- position of the list can be: bottom, top, left, right
+      height = 10,                  -- height of the trouble list when position is top or bottom
+      width = 50,                   -- width of the list when position is left or right
+      icons = true,                 -- use devicons for filenames
+      mode = "workspace_diagnostics", -- "workspace_diagnostics", "document_diagnostics", "quickfix", "lsp_references", "loclist"
+      severity = nil,               -- nil (ALL) or vim.diagnostic.severity.ERROR | WARN | INFO | HINT
+      fold_open = "",            -- icon used for open folds
+      fold_closed = "",          -- icon used for closed folds
+      group = true,                 -- group results by file
+      padding = true,               -- add an extra new line on top of the list
+      cycle_results = true,         -- cycle item list when reaching beginning or end of list
+      action_keys = {               -- key mappings for actions in the trouble list
+        -- map to {} to remove a mapping, for example:
+        -- close = {},
+        close = "q",                 -- close the list
+        cancel = "<esc>",            -- cancel the preview and get back to your last window / buffer / cursor
+        refresh = "r",               -- manually refresh
+        jump = { "<cr>", "<tab>" },  -- jump to the diagnostic or open / close folds
+        open_split = { "<c-x>" },    -- open buffer in new split
+        open_vsplit = { "<c-v>" },   -- open buffer in new vsplit
+        open_tab = { "<c-t>" },      -- open buffer in new tab
+        jump_close = { "o" },        -- jump to the diagnostic and close the list
+        toggle_mode = "m",           -- toggle between "workspace" and "document" diagnostics mode
+        switch_severity = "s",       -- switch "diagnostics" severity filter level to HINT / INFO / WARN / ERROR
+        toggle_preview = "P",        -- toggle auto_preview
+        hover = "K",                 -- opens a small popup with the full multiline message
+        preview = "p",               -- preview the diagnostic location
+        close_folds = { "zM", "zm" }, -- close all folds
+        open_folds = { "zR", "zr" }, -- open all folds
+        toggle_fold = { "zA", "za" }, -- toggle fold of current file
+        previous = "k",              -- previous item
+        next = "j"                   -- next item
+      },
+      indent_lines = true,           -- add an indent guide below the fold icons
+      auto_open = false,             -- automatically open the list when you have diagnostics
+      auto_close = false,            -- automatically close the list when you have no diagnostics
+      auto_preview = true,           -- automatically preview the location of the diagnostic. <esc> to close preview and go back to last window
+      auto_fold = false,             -- automatically fold a file trouble list at creation
+      auto_jump = { "lsp_definitions" }, -- for the given modes, automatically jump if there is only a single result
+      signs = {
+        -- icons / text used for a diagnostic
+        error = "",
+        warning = "",
+        hint = "",
+        information = "",
+        other = "",
+      },
+      use_diagnostic_signs = false -- enabling this will use the signs defined in your lsp client
+    },
   },
   {
     'neovim/nvim-lspconfig',
@@ -1029,10 +1091,10 @@ require('lazy').setup({
 
       -- Global mappings. -------------------------------------------------------
       -- See `:help vim.diagnostic.*` for documentation on any of the below functions
-      keymap.set('n', '<space>e', vim.diagnostic.open_float)
-      keymap.set('n', '[d', vim.diagnostic.goto_prev)
-      keymap.set('n', ']d', vim.diagnostic.goto_next)
-      keymap.set('n', '<space>q', vim.diagnostic.setloclist)
+      map('n', '<space>e', vim.diagnostic.open_float)
+      map('n', '[d', vim.diagnostic.goto_prev)
+      map('n', ']d', vim.diagnostic.goto_next)
+      map('n', '<space>q', vim.diagnostic.setloclist)
 
       -- Use LspAttach autocommand to only map the following keys
       -- after the language server attaches to the current buffer
@@ -1045,21 +1107,21 @@ require('lazy').setup({
           -- Buffer local mappings.
           -- See `:help vim.lsp.*` for documentation on any of the below functions
           local opts = { buffer = ev.buf }
-          keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-          keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-          keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-          keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-          keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-          keymap.set('n', '<Leader>wa', vim.lsp.buf.add_workspace_folder, opts)
-          keymap.set('n', '<Leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
-          keymap.set('n', '<Leader>wl', function()
+          map('n', 'gD', vim.lsp.buf.declaration, opts)
+          map('n', 'gd', vim.lsp.buf.definition, opts)
+          map('n', 'K', vim.lsp.buf.hover, opts)
+          map('n', 'gi', vim.lsp.buf.implementation, opts)
+          map('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+          map('n', '<Leader>wa', vim.lsp.buf.add_workspace_folder, opts)
+          map('n', '<Leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
+          map('n', '<Leader>wl', function()
             print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
           end, opts)
-          keymap.set('n', '<Leader>D', vim.lsp.buf.type_definition, opts)
-          keymap.set('n', '<F2>', vim.lsp.buf.rename, opts)
-          keymap.set({ 'n', 'v' }, '<Leader>ca', vim.lsp.buf.code_action, opts)
-          keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-          keymap.set('n', '<F3>', function()
+          map('n', '<Leader>D', vim.lsp.buf.type_definition, opts)
+          map('n', '<F2>', vim.lsp.buf.rename, opts)
+          map({ 'n', 'v' }, '<Leader>ca', vim.lsp.buf.code_action, opts)
+          map('n', 'gr', vim.lsp.buf.references, opts)
+          map('n', '<F3>', function()
             vim.lsp.buf.format { async = true }
           end, opts)
         end,
