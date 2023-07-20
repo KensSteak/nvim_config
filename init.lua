@@ -33,7 +33,7 @@ opt.signcolumn = 'yes' --行数表示の横にLSP用の余白を常時表示
 
 -- undo
 if vim.fn.has('persistent_undo') == 1 then
-  opt.undodir  = '~/.local/share/nvim/undo'
+  opt.undodir  = vim.fn.expand('$HOME/.local/share/nvim/undo')
   opt.undofile = true
 end
 
@@ -208,7 +208,7 @@ require('lazy').setup({
     -- dm=             Delete the bookmark under the cursor.
     'chentoast/marks.nvim',
     config = function()
-      require 'marks'.setup {
+      require 'marks'.setup({
         -- whether to map keybinds or not. default true
         default_mappings = true,
         -- which builtin marks to show. default {}
@@ -238,7 +238,7 @@ require('lazy').setup({
           virt_text = "hello world"
         },
         mappings = {}
-      }
+      })
     end
   },
   {
@@ -501,6 +501,15 @@ require('lazy').setup({
         zindex = 20,     -- The Z-index of the context window
         on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
       }
+    end
+  },
+
+  {
+    -- 関数名等を閉じ括弧の後ろに表示(treesitter依存)
+    'haringsrob/nvim_context_vt',
+    lazy = false,
+    config = function()
+      require('nvim_context_vt').setup()
     end
   },
 
@@ -1221,8 +1230,9 @@ require('lazy').setup({
       require('telescope').load_extension('aerial')
     end
   },
-  -- markdown
+
   {
+    -- markdown
     'iamcco/markdown-preview.nvim',
     ft = { 'markdown', 'pandoc.markdown', 'rmd' },
     build = 'sh -c "cd app && yarn install"'
