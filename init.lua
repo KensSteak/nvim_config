@@ -31,16 +31,22 @@ opt.shiftwidth = 2
 opt.tabstop = 2
 opt.signcolumn = 'yes' --行数表示の横にLSP用の余白を常時表示
 
+-- undo
+if vim.fn.has('persistent_undo') == 1 then
+  opt.undodir  = '~/.local/share/nvim/undo'
+  opt.undofile = true
+end
+
 -- 相対行番号のtoggle
 opt.relativenumber = true
 vim.api.nvim_create_autocmd('InsertEnter', {
-  pattern = '*',
+  pattern = '*.*',
   callback = function()
     opt.relativenumber = false
   end
 })
 vim.api.nvim_create_autocmd('InsertLeave', {
-  pattern = '*',
+  pattern = '*.*',
   callback = function()
     opt.relativenumber = true
   end
@@ -114,13 +120,32 @@ opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
   {
+    -- TODO: キーマップの一覧を登録する
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    init = function()
+      vim.o.timeout = true
+      vim.o.timeoutlen = 300
+    end,
+    opts = {
+      -- your configuration comes here
+      -- or leave it empty to use the default settings
+      -- refer to the configuration section below
+    }
+  },
+  {
     -- 起動時にファイル名の引数なしで起動した場合に表示するスタートアップ画面を設定できる。
     'goolord/alpha-nvim',
     event = "VimEnter",
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
-      require 'alpha'.setup(require 'alpha.themes.startify'.opts)
+      require('alpha').setup(require 'alpha.themes.startify'.opts)
     end
+  },
+  {
+    -- registerの内容を引き継ぐ
+    'yutkat/save-clipboard-on-exit.nvim',
+    lazy = false,
   },
   {
     -- scrollbarの表示、hslensで検索結果のハイライト
@@ -132,6 +157,23 @@ require('lazy').setup({
     end
   },
   {
+    -- registerの内容を引き継ぐ
+    "gbprod/substitute.nvim",
+    config = function()
+      require("substitute").setup({
+        -- your configuration comes here
+        -- or leave it empty to use the default settings
+        -- refer to the configuration section below
+      })
+      -- Lua
+      map("n", "<leader>s", require('substitute').operator, { noremap = true })
+      map("n", "<leader>ss", require('substitute').line, { noremap = true })
+      map("n", "<leader>S", require('substitute').eol, { noremap = true })
+      map("x", "<leader>s", require('substitute').visual, { noremap = true })
+    end
+  },
+  {
+    -- nvimの起動を高速化
     'lewis6991/impatient.nvim',
     lazy = false,    -- make sure we load this during startup if it is your main colorscheme
     priority = 1010, -- make sure to load this before all the other start plugins
@@ -139,8 +181,85 @@ require('lazy').setup({
       require('impatient')
     end,
   },
+  {
+    -- 左右にある各単語のユニークな文字をハイライト
+    'unblevable/quick-scope',
+    lazy = false
+  },
+  {
+    -- markを可視化
+    -- mx              Set mark x
+    -- m,              Set the next available alphabetical (lowercase) mark
+    -- m;              Toggle the next available mark at the current line
+    -- dmx             Delete mark x
+    -- dm-             Delete all marks on the current line
+    -- dm<space>       Delete all marks in the current buffer
+    -- m]              Move to next mark
+    -- m[              Move to previous mark
+    -- m:              Preview mark. This will prompt you for a specific mark to
+    --                 preview; press <cr> to preview the next mark.
+    --
+    -- m[0-9]          Add a bookmark from bookmark group[0-9].
+    -- dm[0-9]         Delete all bookmarks from bookmark group[0-9].
+    -- m}              Move to the next bookmark having the same type as the bookmark under
+    --                 the cursor. Works across buffers.
+    -- m{              Move to the previous bookmark having the same type as the bookmark under
+    --                 the cursor. Works across buffers.
+    -- dm=             Delete the bookmark under the cursor.
+    'chentoast/marks.nvim',
+    config = function()
+      require 'marks'.setup {
+        -- whether to map keybinds or not. default true
+        default_mappings = true,
+        -- which builtin marks to show. default {}
+        builtin_marks = { ".", "<", ">", "^" },
+        -- whether movements cycle back to the beginning/end of buffer. default true
+        cyclic = true,
+        -- whether the shada file is updated after modifying uppercase marks. default false
+        force_write_shada = false,
+        -- how often (in ms) to redraw signs/recompute mark positions.
+        -- higher values will have better performance but may cause visual lag,
+        -- while lower values may cause performance penalties. default 150.
+        refresh_interval = 250,
+        -- sign priorities for each type of mark - builtin marks, uppercase marks, lowercase
+        -- marks, and bookmarks.
+        -- can be either a table with all/none of the keys, or a single number, in which case
+        -- the priority applies to all marks.
+        -- default 10.
+        sign_priority = { lower = 10, upper = 15, builtin = 8, bookmark = 20 },
+        -- disables mark tracking for specific filetypes. default {}
+        excluded_filetypes = {},
+        -- marks.nvim allows you to configure up to 10 bookmark groups, each with its own
+        -- sign/virttext. Bookmarks can be used to group together positions and quickly move
+        -- across multiple buffers. default sign is '!@#$%^&*()' (from 0 to 9), and
+        -- default virt_text is "".
+        bookmark_0 = {
+          sign = "⚑",
+          virt_text = "hello world"
+        },
+        mappings = {}
+      }
+    end
+  },
+  {
+    -- Linediffコマンドで２つの選択行を比較、編集
+    'AndrewRadev/linediff.vim',
+    cmd = 'Linediff'
+  },
+  {
+    -- *, ?で移動しないようにする
+    'haya14busa/vim-asterisk',
+    lazy = false,
+    config = function()
+      map('n', '*', '<Plug>(asterisk-z*)')
+      map('n', '#', '<Plug>(asterisk-z#)')
+      map('n', 'g*', '<Plug>(asterisk-gz*)')
+      map('n', 'g#', '<Plug>(asterisk-gz#)')
+    end
+  },
 
   {
+    -- colorscheme
     "folke/tokyonight.nvim",
     config = function()
       -- load the colorscheme here
@@ -149,6 +268,7 @@ require('lazy').setup({
   },
 
   {
+    -- colorscheme
     'olivercederborg/poimandres.nvim',
     config = function()
       require('poimandres').setup {
@@ -161,6 +281,7 @@ require('lazy').setup({
   },
 
   {
+    -- todoをハイライト
     "folke/todo-comments.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
@@ -186,6 +307,7 @@ require('lazy').setup({
   },
 
   {
+    -- mode毎に背景色を変更
     'mvllow/modes.nvim',
     tag = 'v0.2.0',
     config = function()
@@ -194,14 +316,27 @@ require('lazy').setup({
   },
 
   {
-    't9md/vim-quickhl',
+    -- 16進数の横に参考の色を表示
+    "hek14/symbol-overlay.nvim",
+    event = "VeryLazy",
+    dependencies = { "neovim/nvim-lspconfig", 'nvim-telescope/telescope.nvim' },
     config = function()
-      map({ 'n', 'x' }, '<Leader>m', '<Plug>(quickhl-manual-this)')
-      map({ 'n', 'x' }, '<Leader>M', '<Plug>(quickhl-manual-reset)')
-    end
+      require('symbol-overlay').setup({
+        keymap = {
+          toggle = '<C-t>t',
+          clear_all = '<C-t>c',
+          next_highlight = '<C-t>j',
+          prev_highlight = '<C-t>k',
+          gen = '<C-t>g',
+          list = '<C-t>l',
+        }
+      })
+      require 'telescope'.load_extension('symbol_overlay') -- comment this if you don't have telescope installed
+    end,
   },
 
   {
+    -- 16進数の横に参考の色を表示
     'norcalli/nvim-colorizer.lua',
     config = function()
       require('colorizer').setup()
@@ -209,6 +344,7 @@ require('lazy').setup({
   },
 
   {
+    -- 日本語をローマ字検索
     'lambdalisue/kensaku.vim',
     dependencies = { 'vim-denops/denops.vim' },
     lazy = false
@@ -224,7 +360,9 @@ require('lazy').setup({
       end
     end
   },
+
   {
+    -- lazygitをnvimから起動
     "kdheepak/lazygit.nvim",
     -- optional for floating window border decoration
     cmd = 'LazyGit',
@@ -236,18 +374,6 @@ require('lazy').setup({
     end
   },
 
-  -- {
-  --   "github/copilot.vim",
-  --   lazy = false, -- make sure we load this during startup if it is your main colorscheme
-  --   config = function()
-  --     -- Acceptの引数は、補完候補がないときのキーコード
-  --     vim.cmd("imap <silent><script><expr> <C-k> copilot#Accept(\"\")")
-  --     vim.g.copilot_no_tab_map = true
-  --
-  --     map('i', '<C-f>', '<Plug>(copilot-next)', { silent = true })
-  --     map('i', '<C-b>', '<Plug>(copilot-previous)', { silent = true })
-  --   end,
-  -- },
   {
     "zbirenbaum/copilot-cmp",
     event = "InsertEnter",
@@ -259,6 +385,7 @@ require('lazy').setup({
       )
     end
   },
+
   {
     "zbirenbaum/copilot.lua",
     event = "InsertEnter",
@@ -356,6 +483,7 @@ require('lazy').setup({
   },
 
   {
+    -- 関数名等を上行に表示
     'nvim-treesitter/nvim-treesitter-context',
     lazy = false,
     config = function()
@@ -377,6 +505,7 @@ require('lazy').setup({
   },
 
   {
+    -- gitの情報を可視化、stage用の機能を追加
     'lewis6991/gitsigns.nvim',
     lazy = false,
     config = function()
@@ -466,6 +595,7 @@ require('lazy').setup({
   },
 
   {
+    -- comment outを簡単にする
     'numToStr/Comment.nvim',
     config = function()
       require('Comment').setup {
@@ -515,6 +645,7 @@ require('lazy').setup({
   },
 
   {
+    -- " でregistoryを表示
     'tversteeg/registers.nvim',
     lazy = false,
     config = function()
@@ -523,7 +654,12 @@ require('lazy').setup({
   },
 
   {
-    -- https://github.com/chrisgrieser/nvim-various-textobjs
+    -- text-objetctを色々追加(以下、抜粋)
+    --  indent(全体): ii,ai,aI, iI
+    --  indent(後ろのみ): R
+    --  subword(CamelCaseなどで区切る): iS, aS
+    --  行(タブ、空白含まず): i_,a_
+    --  バッファ全体: gG
     'chrisgrieser/nvim-various-textobjs',
     config = function()
       -- default config
@@ -576,11 +712,27 @@ require('lazy').setup({
               },
             }
           },
-          lualine_c = {
-            'navic',
-            color_correction = nil, -- "static" or "dynamic". モードによって背景色を帰る場合は "dynamic" を指定
-            navic_opts = nil        -- lua table with same format as setup's option. All options except "lsp" options take effect when set here.
-          },
+          lualine_c = { {
+            "aerial",
+            -- The separator to be used to separate symbols in status line.
+            sep = ' ) ',
+
+            -- The number of symbols to render top-down. In order to render only 'N' last
+            -- symbols, negative numbers may be supplied. For instance, 'depth = -1' can
+            -- be used in order to render only current symbol.
+            depth = nil,
+
+            -- When 'dense' mode is on, icons are not rendered near their symbols. Only
+            -- a single icon that represents the kind of current symbol is rendered at
+            -- the beginning of status line.
+            dense = false,
+
+            -- The separator to be used to separate symbols in dense mode.
+            dense_sep = '.',
+
+            -- Color the symbol icons.
+            colored = true,
+          } },
           lualine_x = { 'filetype', 'encoding' },
           lualine_y = {
             {
@@ -605,6 +757,7 @@ require('lazy').setup({
   },
 
   {
+    -- quick motion
     'ggandor/leap.nvim',
     lazy = false,
     config = function()
@@ -613,285 +766,76 @@ require('lazy').setup({
   },
 
   {
+    -- 色々依存している
     'nvim-tree/nvim-web-devicons',
     lazy = false,
   },
 
   {
-    'romgrk/barbar.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons', 'lewis6991/gitsigns.nvim' },
-    lazy = false,
+    -- buffer表示用
+    'akinsho/bufferline.nvim',
+    version = "*",
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
-      vim.g.barbar_auto_setup = false
-
-      local opts = { noremap = true, silent = true }
-
-      -- Move to previous/next
-      map('n', '<A-k>', '<Cmd>BufferPrevious<CR>', opts)
-      map('n', '<A-j>', '<Cmd>BufferNext<CR>', opts)
-      -- Re-order to previous/next
-      map('n', '<A-<>', '<Cmd>BufferMovePrevious<CR>', opts)
-      map('n', '<A->>', '<Cmd>BufferMoveNext<CR>', opts)
-      -- Goto buffer in position...
-      map('n', '<A-1>', '<Cmd>BufferGoto 1<CR>', opts)
-      map('n', '<A-2>', '<Cmd>BufferGoto 2<CR>', opts)
-      map('n', '<A-3>', '<Cmd>BufferGoto 3<CR>', opts)
-      map('n', '<A-4>', '<Cmd>BufferGoto 4<CR>', opts)
-      map('n', '<A-5>', '<Cmd>BufferGoto 5<CR>', opts)
-      map('n', '<A-6>', '<Cmd>BufferGoto 6<CR>', opts)
-      map('n', '<A-7>', '<Cmd>BufferGoto 7<CR>', opts)
-      map('n', '<A-8>', '<Cmd>BufferGoto 8<CR>', opts)
-      map('n', '<A-9>', '<Cmd>BufferGoto 9<CR>', opts)
-      map('n', '<A-0>', '<Cmd>BufferLast<CR>', opts)
-      -- Pin/unpin buffer
-      map('n', '<A-p>', '<Cmd>BufferPin<CR>', opts)
-      -- Close buffer
-      map('n', '<Leader>k', '<Cmd>BufferClose<CR>', opts)
-      -- Wipeout buffer
-      --                 :BufferWipeout
-      -- Close commands
-      --                 :BufferCloseAllButCurrent
-      --                 :BufferCloseAllButPinned
-      --                 :BufferCloseAllButCurrentOrPinned
-      --                 :BufferCloseBuffersLeft
-      --                 :BufferCloseBuffersRight
-      -- Magic buffer-picking mode
-      map('n', '<C-p>', '<Cmd>BufferPick<CR>', opts)
-      -- Sort automatically by...
-      -- map('n', '<Leader>bb', '<Cmd>BufferOrderByBufferNumber<CR>', opts)
-      -- map('n', '<Leader>bd', '<Cmd>BufferOrderByDirectory<CR>', opts)
-      -- map('n', '<Leader>bl', '<Cmd>BufferOrderByLanguage<CR>', opts)
-      -- map('n', '<Leader>bw', '<Cmd>BufferOrderByWindowNumber<CR>', opts)
-
-      -- Other:
-      -- :BarbarEnable - enables barbar (enabled by default)
-      -- :BarbarDisable - very bad command, should never be used
-      --
-      require("barbar").setup {
-        -- -- Enable/disable animations
-        -- animation = true,
-        --
-        -- -- Enable/disable auto-hiding the tab bar when there is a single buffer
-        -- auto_hide = false,
-        --
-        -- -- Enable/disable current/total tabpages indicator (top right corner)
-        -- tabpages = false,
-        --
-        -- -- Enables/disable clickable tabs
-        -- --  - left-click: go to buffer
-        -- --  - middle-click: delete buffer
-        -- clickable = true,
-        --
-        -- -- Excludes buffers from the tabline
-        -- exclude_ft = {},
-        -- exclude_name = {},
-        --
-        -- -- A buffer to this direction will be focused (if it exists) when closing the current buffer.
-        -- -- Valid options are 'left' (the default), 'previous', and 'right'
-        -- focus_on_close = 'left',
-        --
-        -- -- Hide inactive buffers and file extensions. Other options are `alternate`, `current`, and `visible`.
-        -- -- hide = {extensions = true, inactive = true},
-        --
-        -- -- Disable highlighting alternate buffers
-        -- highlight_alternate = false,
-        --
-        -- -- Disable highlighting file icons in inactive buffers
-        -- highlight_inactive_file_icons = false,
-        --
-        -- -- Enable highlighting visible buffers
-        -- highlight_visible = true,
-        --
-        -- icons = {
-        --   -- Configure the base icons on the bufferline.
-        --   -- Valid options to display the buffer index and -number are `true`, 'superscript' and 'subscript'
-        --   buffer_index = false,
-        --   buffer_number = false,
-        --   button = '',
-        --   -- Enables / disables diagnostic symbols
-        --   diagnostics = {
-        --     [vim.diagnostic.severity.ERROR] = { enabled = true, icon = 'ﬀ' },
-        --     [vim.diagnostic.severity.WARN] = { enabled = true },
-        --     [vim.diagnostic.severity.INFO] = { enabled = false },
-        --     [vim.diagnostic.severity.HINT] = { enabled = true },
-        --   },
-        --   gitsigns = {
-        --     added = { enabled = true, icon = '+' },
-        --     changed = { enabled = true, icon = '~' },
-        --     deleted = { enabled = true, icon = '-' },
-        --   },
-        --   filetype = {
-        --     -- Sets the icon's highlight group.
-        --     -- If false, will use nvim-web-devicons colors
-        --     custom_colors = false,
-        --
-        --     -- Requires `nvim-web-devicons` if `true`
-        --     enabled = true,
-        --   },
-        --   separator = { left = '▎', right = '' },
-        --
-        --   -- If true, add an additional separator at the end of the buffer list
-        --   separator_at_end = true,
-        --
-        --   -- Configure the icons on the bufferline when modified or pinned.
-        --   -- Supports all the base icon options.
-        --   modified = { button = '●' },
-        --   pinned = { button = '', filename = true },
-        --
-        --   -- Use a preconfigured buffer appearance— can be 'default', 'powerline', or 'slanted'
-        --   preset = 'default',
-        --
-        --   -- Configure the icons on the bufferline based on the visibility of a buffer.
-        --   -- Supports all the base icon options, plus `modified` and `pinned`.
-        --   alternate = { filetype = { enabled = false } },
-        --   current = { buffer_index = false },
-        --   inactive = { button = '×' },
-        --   visible = { modified = { buffer_number = false } },
-        -- },
-        --
-        -- -- If true, new buffers will be inserted at the start/end of the list.
-        -- -- Default is to insert after current buffer.
-        -- insert_at_end = false,
-        -- insert_at_start = false,
-        --
-        -- -- Sets the maximum padding width with which to surround each tab
-        -- maximum_padding = 1,
-        --
-        -- -- Sets the minimum padding width with which to surround each tab
-        -- minimum_padding = 1,
-        --
-        -- -- Sets the maximum buffer name length.
-        -- maximum_length = 30,
-        --
-        -- -- Sets the minimum buffer name length.
-        -- minimum_length = 0,
-        --
-        -- -- If set, the letters for each buffer in buffer-pick mode will be
-        -- -- assigned based on their name. Otherwise or in case all letters are
-        -- -- already assigned, the behavior is to assign letters in order of
-        -- -- usability (see order below)
-        -- semantic_letters = true,
-        --
-        -- -- Set the filetypes which barbar will offset itself for
-        -- sidebar_filetypes = {
-        --   -- Use the default values: {event = 'BufWinLeave', text = nil}
-        --   NvimTree = true,
-        --   -- Or, specify the text used for the offset:
-        --   undotree = { text = 'undotree' },
-        --   -- Or, specify the event which the sidebar executes when leaving:
-        --   ['neo-tree'] = { event = 'BufWipeout' },
-        --   -- Or, specify both
-        --   Outline = { event = 'BufWinLeave', text = 'symbols-outline' },
-        -- },
-        --
-        -- -- New buffer letters are assigned in this order. This order is
-        -- -- optimal for the qwerty keyboard layout but might need adjustment
-        -- -- for other layouts.
-        -- letters = 'asdfjkl;ghnmxcvbziowerutyqpASDFJKLGHNMXCVBZIOWERUTYQP',
-        --
-        -- -- Sets the name of unnamed buffers. By default format is "[Buffer X]"
-        -- -- where X is the buffer number. But only a static string is accepted here.
-        -- no_name_title = nil,
-      }
+      require("bufferline").setup({
+        options = {
+          diagnostics = "nvim_lsp",
+          diagnostics_indicator = function(count, level, diagnostics_dict, context)
+            local s = " "
+            for e, n in pairs(diagnostics_dict) do
+              local sym = e == "error" and " "
+                  or (e == "warning" and " " or "")
+              s = s .. n .. ' ' .. sym
+            end
+            return s
+          end
+        }
+      })
     end
   },
 
   {
+    -- ファイルごとにインデントを自動判定
     'tpope/vim-sleuth',
     lazy = false,
   },
 
   {
+    -- 色々依存している
     'nvim-lua/plenary.nvim',
     lazy = false,
   },
 
   {
-    "kylechui/nvim-surround",
-    version = "*", -- Use for stability; omit to use `main` branch for the latest features
-    event = "InsertEnter",
+    -- 括弧、タグ等の挿入・変更・削除
+    'kylechui/nvim-surround',
+    version = '*', -- Use for stability; omit to use `main` branch for the latest features
+    event = 'InsertEnter',
     config = function()
       require("nvim-surround").setup({
         -- Configuration here, or leave empty to use defaults
       })
     end
+    -- * will denote the cursor position:
+    --     Old text                    Command         New text
+    -- --------------------------------------------------------------------------------
+    --     surr*ound_words             ysiw)           (surround_words)
+    --     *make strings               ys$"            "make strings"
+    --     [delete ar*ound me!]        ds]             delete around me!
+    --     remove <b>HTML t*ags</b>    dst             remove HTML tags
+    --     'change quot*es'            cs'"            "change quotes"
+    --     <b>or tag* types</b>        csth1<CR>       <h1>or tag types</h1>
+    --     delete(functi*on calls)     dsf             function calls
   },
-
-  {
-    'anuvyklack/pretty-fold.nvim',
-    config = function()
-      require('pretty-fold').setup {
-        matchup_patterns = {
-          { '^%s*do$',       'end' }, -- do ... end blocks
-          { '^%s*if',        'end' }, -- if ... end
-          { '^%s*for',       'end' }, -- for
-          { 'function%s*%(', 'end' }, -- 'function( or 'function (''
-          { '{',             '}' },
-          { '%(',            ')' },   -- % to escape lua pattern char
-          { '%[',            ']' },   -- % to escape lua pattern char
-        },
-      }
-    end
-  },
-  {
-    'RRethy/vim-illuminate',
-    lazy = false,
-    config = function()
-      -- default configuration
-      require('illuminate').configure({
-        -- providers: provider used to get references in the buffer, ordered by priority
-        providers = {
-          'lsp',
-          'treesitter',
-          'regex',
-        },
-        -- delay: delay in milliseconds
-        delay = 100,
-        -- filetype_overrides: filetype specific overrides.
-        -- The keys are strings to represent the filetype while the values are tables that
-        -- supports the same keys passed to .configure except for filetypes_denylist and filetypes_allowlist
-        -- filetype_overrides = {},
-        -- filetypes_denylist: filetypes to not illuminate, this overrides filetypes_allowlist
-        -- filetypes_denylist = { },
-        -- filetypes_allowlist: filetypes to illuminate, this is overriden by filetypes_denylist
-        -- filetypes_allowlist = {},
-        -- modes_denylist: modes to not illuminate, this overrides modes_allowlist
-        -- See `:help mode()` for possible values
-        -- modes_denylist = {},
-        -- modes_allowlist: modes to illuminate, this is overriden by modes_denylist
-        -- See `:help mode()` for possible values
-        -- modes_allowlist = {},
-        -- providers_regex_syntax_denylist: syntax to not illuminate, this overrides providers_regex_syntax_allowlist
-        -- Only applies to the 'regex' provider
-        -- Use :echom synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
-        -- providers_regex_syntax_denylist = {},
-        -- providers_regex_syntax_allowlist: syntax to illuminate, this is overriden by providers_regex_syntax_denylist
-        -- Only applies to the 'regex' provider
-        -- Use :echom synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
-        -- providers_regex_syntax_allowlist = {},
-        -- under_cursor: whether or not to illuminate under the cursor
-        -- under_cursor = true,
-        -- large_file_cutoff: number of lines at which to use large_file_config
-        -- The `under_cursor` option is disabled when this cutoff is hit
-        -- large_file_cutoff = nil,
-        -- large_file_config: config to use for large files (based on large_file_cutoff).
-        -- Supports the same keys passed to .configure
-        -- If nil, vim-illuminate will be disabled for large files.
-        -- large_file_overrides = nil,
-        -- min_count_to_highlight: minimum number of matches required to perform highlighting
-        -- min_count_to_highlight = 1,
-      })
-    end
-  },
-
 
   {
     "nvim-telescope/telescope-frecency.nvim",
-    cmd = 'Telescope',
+    dependencies = { "kkharji/sqlite.lua" },
     config = function()
       require "telescope".load_extension("frecency")
+      map('n', '<Leader>,', function() require('telescope').extensions.frecency.frecency() end,
+        { noremap = true, silent = true })
     end,
-    dependencies = { "kkharji/sqlite.lua" }
   },
 
   {
@@ -908,7 +852,7 @@ require('lazy').setup({
       map('n', '<Leader>b', builtin.buffers, {})
 
       local actions = require("telescope.actions")
-      require("telescope").setup {
+      require("telescope").setup({
         defaults = {
           mappings = {
             i = {
@@ -918,11 +862,6 @@ require('lazy').setup({
               ["q"] = actions.close
             }
           },
-        },
-      }
-
-      require("telescope").setup {
-        defaults = {
           extensions = {
             fzf = {
               fuzzy = true,
@@ -932,10 +871,17 @@ require('lazy').setup({
             },
           },
         },
-      }
-
-      vim.api.nvim_set_keymap('n', '<Leader>,', "<cmd>lua require('telescope').extensions.frecency.frecency()<CR>",
-        { noremap = true, silent = true })
+        extensions = {
+          aerial = {
+            -- Display symbols as <root>.<parent>.<symbol>
+            show_nesting = {
+              ['_'] = false, -- This key will be the default
+              json = true,   -- You can set the option for specific filetypes
+              yaml = true,
+            }
+          }
+        }
+      })
     end
   },
 
@@ -984,6 +930,7 @@ require('lazy').setup({
   },
 
   {
+    -- インデントガイド, 改行位置を視覚化
     'lukas-reineke/indent-blankline.nvim',
     event = 'BufEnter',
     config = function()
@@ -996,6 +943,7 @@ require('lazy').setup({
   },
 
   {
+    -- 閉じ括弧を自動挿入
     'windwp/nvim-autopairs',
     event = 'BufEnter',
     config = function()
@@ -1004,6 +952,7 @@ require('lazy').setup({
   },
 
   {
+    -- LSPのprogressを右下にふわっと表示
     "j-hui/fidget.nvim",
     tag = "legacy",
     config = function()
@@ -1012,6 +961,7 @@ require('lazy').setup({
   },
 
   {
+    -- 検索結果の表示を拡張
     'kevinhwang91/nvim-hlslens',
     event = 'BufEnter',
     config = function()
@@ -1020,17 +970,6 @@ require('lazy').setup({
         -- hlslens config overrides
       })
       local kopts = { noremap = true, silent = true }
-
-      vim.api.nvim_set_keymap('n', 'n',
-        [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]],
-        kopts)
-      vim.api.nvim_set_keymap('n', 'N',
-        [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>]],
-        kopts)
-      vim.api.nvim_set_keymap('n', '*', [[*<Cmd>lua require('hlslens').start()<CR>]], kopts)
-      vim.api.nvim_set_keymap('n', '#', [[#<Cmd>lua require('hlslens').start()<CR>]], kopts)
-      vim.api.nvim_set_keymap('n', 'g*', [[g*<Cmd>lua require('hlslens').start()<CR>]], kopts)
-      vim.api.nvim_set_keymap('n', 'g#', [[g#<Cmd>lua require('hlslens').start()<CR>]], kopts)
 
       vim.api.nvim_set_keymap('n', '<Leader>x', ':noh<CR>', kopts)
     end
@@ -1175,8 +1114,12 @@ require('lazy').setup({
     dependencies = {
       "neovim/nvim-lspconfig" }
   },
-  { 'hrsh7th/cmp-calc',     event = 'InsertEnter' },
-  { 'onsails/lspkind.nvim', event = 'InsertEnter' },
+  { 'hrsh7th/cmp-calc', event = 'InsertEnter' },
+  {
+    -- adds vscode-like pictograms
+    'onsails/lspkind.nvim',
+    event = 'InsertEnter'
+  },
   {
     "L3MON4D3/LuaSnip",
     -- follow latest release.
@@ -1244,7 +1187,6 @@ require('lazy').setup({
       use_diagnostic_signs = false -- enabling this will use the signs defined in your lsp client
     },
     config = function()
-      map("n", "<C-t>", "<cmd>Trouble<cr>", { silent = true, noremap = true })
       map("n", "<leader>xx", "<cmd>TroubleToggle<cr>", { silent = true, noremap = true })
       map("n", "<leader>xw", "<cmd>TroubleToggle workspace_diagnostics<cr>", { silent = true, noremap = true })
       map("n", "<leader>xd", "<cmd>TroubleToggle document_diagnostics<cr>", { silent = true, noremap = true })
@@ -1256,52 +1198,36 @@ require('lazy').setup({
     end
   },
   {
-    "SmiteshP/nvim-navic",
-    dependencies = { "neovim/nvim-lspconfig" },
+    -- function/class等の構造表示、移動
+    'stevearc/aerial.nvim',
+    lazy = false,
+    opts = {},
+    -- Optional dependencies
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-tree/nvim-web-devicons"
+    },
     config = function()
-      require('nvim-navic').setup {
-        icons = {
-          File          = "󰈙 ",
-          Module        = " ",
-          Namespace     = "󰌗 ",
-          Package       = " ",
-          Class         = "󰌗 ",
-          Method        = "󰆧 ",
-          Property      = " ",
-          Field         = " ",
-          Constructor   = " ",
-          Enum          = "󰕘",
-          Interface     = "󰕘",
-          Function      = "󰊕 ",
-          Variable      = "󰆧 ",
-          Constant      = "󰏿 ",
-          String        = "󰀬 ",
-          Number        = "󰎠 ",
-          Boolean       = "◩ ",
-          Array         = "󰅪 ",
-          Object        = "󰅩 ",
-          Key           = "󰌋 ",
-          Null          = "󰟢 ",
-          EnumMember    = " ",
-          Struct        = "󰌗 ",
-          Event         = " ",
-          Operator      = "󰆕 ",
-          TypeParameter = "󰊄 ",
-        },
-        lsp = {
-          auto_attach = false,
-          preference = nil,
-        },
-        highlight = false,
-        separator = " > ",
-        depth_limit = 0,
-        depth_limit_indicator = "..",
-        safe_output = true,
-        lazy_update_context = false,
-        click = false
-      }
+      require('aerial').setup({
+        -- optionally use on_attach to set keymaps when aerial has attached to a buffer
+        on_attach = function(bufnr)
+          -- Jump forwards/backwards with '{' and '}'
+          vim.keymap.set('n', '{', '<cmd>AerialPrev<CR>', { buffer = bufnr })
+          vim.keymap.set('n', '}', '<cmd>AerialNext<CR>', { buffer = bufnr })
+        end
+      })
+      -- You probably also want to set a keymap to toggle aerial
+      vim.keymap.set('n', '<leader>a', '<cmd>AerialToggle!<CR>')
+      require('telescope').load_extension('aerial')
     end
   },
+  -- markdown
+  {
+    'iamcco/markdown-preview.nvim',
+    ft = { 'markdown', 'pandoc.markdown', 'rmd' },
+    build = 'sh -c "cd app && yarn install"'
+  },
+
   {
     'neovim/nvim-lspconfig',
     config = function()
@@ -1312,33 +1238,24 @@ require('lazy').setup({
       local lspconfig = require('lspconfig')
 
       -- on attach
-      local navic = require('nvim-navic')
-      local on_attach = function(client, bufnr)
-        if client.server_capabilities.documentSymbolProvider then
-          navic.attach(client, bufnr)
-        end
-      end
-
+      -- local on_attach = function(client, bufnr)
+      -- end
 
       -- lsp setup --------------------------------------------------------------------
       lspconfig.tsserver.setup {
-        on_attach = on_attach,
         capabilities = capabilities
       }
 
       lspconfig.gopls.setup {
-        on_attach = on_attach,
         capabilities = capabilities
       }
 
       lspconfig.sourcekit.setup {
-        on_attach = on_attach,
         filetypes = { 'swift', 'objective-c', 'objective-cpp' },
         capabilities = capabilities
       }
 
       lspconfig.rust_analyzer.setup {
-        on_attach = on_attach,
         settings = {
           ["rust-analyzer"] = {
             -- enable clippy on save
@@ -1351,12 +1268,10 @@ require('lazy').setup({
       }
 
       lspconfig.pyright.setup {
-        on_attach = on_attach,
         capabilities = capabilities
       }
 
       lspconfig.lua_ls.setup {
-        on_attach = on_attach,
         settings = {
           Lua = {
             runtime = {
@@ -1424,4 +1339,5 @@ require('lazy').setup({
 ------------------------------------------------------------------------------------
 -- finnaly -------------------------------------------------------------------------
 ------------------------------------------------------------------------------------
+vim.cmd('filetype plugin indent on')
 vim.cmd('filetype plugin indent on')
