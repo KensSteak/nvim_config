@@ -188,24 +188,6 @@ require('lazy').setup({
   },
   {
     -- markを可視化
-    -- mx              Set mark x
-    -- m,              Set the next available alphabetical (lowercase) mark
-    -- m;              Toggle the next available mark at the current line
-    -- dmx             Delete mark x
-    -- dm-             Delete all marks on the current line
-    -- dm<space>       Delete all marks in the current buffer
-    -- m]              Move to next mark
-    -- m[              Move to previous mark
-    -- m:              Preview mark. This will prompt you for a specific mark to
-    --                 preview; press <cr> to preview the next mark.
-    --
-    -- m[0-9]          Add a bookmark from bookmark group[0-9].
-    -- dm[0-9]         Delete all bookmarks from bookmark group[0-9].
-    -- m}              Move to the next bookmark having the same type as the bookmark under
-    --                 the cursor. Works across buffers.
-    -- m{              Move to the previous bookmark having the same type as the bookmark under
-    --                 the cursor. Works across buffers.
-    -- dm=             Delete the bookmark under the cursor.
     'chentoast/marks.nvim',
     config = function()
       require 'marks'.setup({
@@ -482,36 +464,36 @@ require('lazy').setup({
     end,
   },
 
-  {
-    -- 関数名等を上行に表示
-    'nvim-treesitter/nvim-treesitter-context',
-    lazy = false,
-    config = function()
-      require 'treesitter-context'.setup {
-        enable = true,            -- Enable this plugin (Can be enabled/disabled later via commands)
-        max_lines = 0,            -- How many lines the window should span. Values <= 0 mean no limit.
-        min_window_height = 0,    -- Minimum editor window height to enable context. Values <= 0 mean no limit.
-        line_numbers = true,
-        multiline_threshold = 20, -- Maximum number of lines to collapse for a single context line
-        trim_scope = 'outer',     -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
-        mode = 'cursor',          -- Line used to calculate context. Choices: 'cursor', 'topline'
-        -- Separator between context and content. Should be a single character string, like '-'.
-        -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
-        separator = nil,
-        zindex = 20,     -- The Z-index of the context window
-        on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
-      }
-    end
-  },
+  -- {
+  --   -- 関数名等を上行に表示
+  --   'nvim-treesitter/nvim-treesitter-context',
+  --   lazy = false,
+  --   config = function()
+  --     require 'treesitter-context'.setup {
+  --       enable = true,            -- Enable this plugin (Can be enabled/disabled later via commands)
+  --       max_lines = 0,            -- How many lines the window should span. Values <= 0 mean no limit.
+  --       min_window_height = 0,    -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+  --       line_numbers = true,
+  --       multiline_threshold = 20, -- Maximum number of lines to collapse for a single context line
+  --       trim_scope = 'outer',     -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
+  --       mode = 'cursor',          -- Line used to calculate context. Choices: 'cursor', 'topline'
+  --       -- Separator between context and content. Should be a single character string, like '-'.
+  --       -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
+  --       separator = nil,
+  --       zindex = 20,     -- The Z-index of the context window
+  --       on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
+  --     }
+  --   end
+  -- },
 
-  {
-    -- 関数名等を閉じ括弧の後ろに表示(treesitter依存)
-    'haringsrob/nvim_context_vt',
-    lazy = false,
-    config = function()
-      require('nvim_context_vt').setup()
-    end
-  },
+  -- {
+  --   -- 関数名等を閉じ括弧の後ろに表示(treesitter依存)
+  --   'haringsrob/nvim_context_vt',
+  --   lazy = false,
+  --   config = function()
+  --     require('nvim_context_vt').setup()
+  --   end
+  -- },
 
   {
     -- gitの情報を可視化、stage用の機能を追加
@@ -786,9 +768,11 @@ require('lazy').setup({
     version = "*",
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
-      require("bufferline").setup({
+      local bufferline = require('bufferline')
+      bufferline.setup({
         options = {
           diagnostics = "nvim_lsp",
+          ---@diagnostic disable-next-line: unused-local
           diagnostics_indicator = function(count, level, diagnostics_dict, context)
             local s = " "
             for e, n in pairs(diagnostics_dict) do
@@ -800,6 +784,9 @@ require('lazy').setup({
           end
         }
       })
+      map('n', '<leader>j', ':<C-u>BufferLineCycleNext<CR>', { noremap = true, silent = true })
+      map('n', '<leader>k', ':<C-u>BufferLineCyclePrev<CR>', { noremap = true, silent = true })
+      map('n', '<A-p>', ':<C-u>BufferLineTogglePin<CR>', { noremap = true, silent = true })
     end
   },
 
@@ -1307,10 +1294,39 @@ require('lazy').setup({
 
       -- Global mappings. -------------------------------------------------------
       -- See `:help vim.diagnostic.*` for documentation on any of the below functions
-      map('n', '<space>e', vim.diagnostic.open_float)
-      map('n', '[d', vim.diagnostic.goto_prev)
-      map('n', ']d', vim.diagnostic.goto_next)
       map('n', '<space>q', vim.diagnostic.setloclist)
+    end
+  },
+  {
+    'nvimdev/lspsaga.nvim',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter', -- optional
+      'nvim-tree/nvim-web-devicons',     -- optional
+    },
+    config = function()
+      require('lspsaga').setup({
+        ui = {
+          border = "single",
+        },
+        symbol_in_winbar = {
+          enable = true,
+        },
+        lightbulb = {
+          enable = false,
+        },
+        show_outline = {
+          auto_preview = false,
+        },
+        code_action = {
+          extend_gitsigns = false,
+        }
+      })
+
+      map('n', '<space>e', '<cmd>Lspsaga show_line_diagnostics<CR>')
+      map('n', '[e', '<cmd>Lspsaga diagnostic_jump_prev<CR>')
+      map('n', ']e', '<cmd>Lspsaga diagnostic_jump_next<CR>')
+      map('n', '<A-j>', '<cmd>Lspsaga term_toggle<CR>')
+      map('n', 'go', '<cmd>Lspsaga outline<CR>')
 
       -- Use LspAttach autocommand to only map the following keys
       -- after the language server attaches to the current buffer
@@ -1323,9 +1339,10 @@ require('lazy').setup({
           -- Buffer local mappings.
           -- See `:help vim.lsp.*` for documentation on any of the below functions
           local opts = { buffer = ev.buf }
-          map('n', 'gD', vim.lsp.buf.declaration, opts)
-          map('n', 'gd', vim.lsp.buf.definition, opts)
-          map('n', 'K', vim.lsp.buf.hover, opts)
+          map('n', 'gD', '<cmd>Lspsaga goto_definition<CR>', opts)
+          map('n', 'gd', '<cmd>Lspsaga peek_definition<CR>', opts)
+          map('n', 'K', '<cmd>Lspsaga hover_doc<CR>', opts)
+          map('n', 'gr', '<cmd>Lspsaga finder<CR>', opts)
           map('n', 'gi', vim.lsp.buf.implementation, opts)
           map('n', '<C-k>', vim.lsp.buf.signature_help, opts)
           map('n', '<Leader>wa', vim.lsp.buf.add_workspace_folder, opts)
@@ -1333,17 +1350,17 @@ require('lazy').setup({
           map('n', '<Leader>wl', function()
             print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
           end, opts)
-          map('n', '<Leader>D', vim.lsp.buf.type_definition, opts)
-          map('n', '<F2>', vim.lsp.buf.rename, opts)
+          map('n', '<Leader>D', '<cmd>Lspsaga goto_type_definition<CR>', opts)
+          map('n', '<F2>', '<cmd>Lspsaga rename<CR>', opts)
           map({ 'n', 'v' }, '<Leader>ca', vim.lsp.buf.code_action, opts)
-          map('n', 'gr', vim.lsp.buf.references, opts)
           map('n', '<F3>', function()
             vim.lsp.buf.format { async = true }
           end, opts)
+          map('n', 'ga', '<cmd>Lspsaga code_action<CR>')
         end,
       })
-    end
-  },
+    end,
+  }
 })
 
 ------------------------------------------------------------------------------------
