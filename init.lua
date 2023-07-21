@@ -29,7 +29,7 @@ opt.breakindent = true
 opt.smarttab = true
 opt.shiftwidth = 2
 opt.tabstop = 2
-opt.signcolumn = 'yes' --行数表示の横にLSP用の余白を常時表示
+opt.signcolumn = 'yes' -- 行数表示の横にLSP用の余白を常時表示
 
 -- undo
 if vim.fn.has('persistent_undo') == 1 then
@@ -85,11 +85,6 @@ map('n', '<Leader>sv', ':vsplit<Return><C-w>w')
 
 map('n', '<Leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
 
-
--- neovim terminal mapping
-map("t", "<ESC>", "<C-\\><C-n>", { noremap = true })
-vim.api.nvim_create_user_command("T", ":split | wincmd j | resize 20 | terminal <args>", { nargs = "*" })
-
 -- Enter insert mode when switching to terminal
 vim.api.nvim_create_autocmd('TermOpen', {
   pattern = '',
@@ -134,6 +129,42 @@ require('lazy').setup({
     }
   },
   {
+    -- 複数ターミナルの切り替え
+    'akinsho/toggleterm.nvim',
+    version = "*",
+    config = function()
+      require('toggleterm').setup({
+        shade_terminals = false
+      })
+      vim.cmd('autocmd TermEnter term://*toggleterm#* tnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm"<CR>')
+      map('n', '<c-t>', '<Cmd>exe v:count1 . "ToggleTerm"<CR>', { noremap = true, silent = true })
+      map('i', '<c-t>', '<esc><Cmd>exe v:count1 . "ToggleTerm"<CR>', { noremap = true, silent = true })
+
+      function _G.set_terminal_keymaps()
+        local opts = {buffer = 0}
+        vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
+        vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
+        vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
+        vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
+        vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
+        vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
+      end
+
+      -- if you only want these mappings for toggle term use term://*toggleterm#* instead
+      vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
+    end
+  },
+  {
+    -- Siliconコマンドで選択範囲を画像出力
+    'segeljakt/vim-silicon',
+    cmd = 'Silicon',
+  },
+  {
+    -- Capture + 実行したいvimコマンド で実行結果を別のバッファに出力(cmd1 | cmd2 ..で連結, !付きでcliコマンドも実行可能)
+    'tyru/capture.vim',
+    cmd = 'Capture',
+  },
+  {
     -- 起動時にファイル名の引数なしで起動した場合に表示するスタートアップ画面を設定できる。
     'goolord/alpha-nvim',
     event = "VimEnter",
@@ -146,6 +177,16 @@ require('lazy').setup({
     -- registerの内容を引き継ぐ
     'yutkat/save-clipboard-on-exit.nvim',
     lazy = false,
+  },
+  {
+    -- :Translateコマンドで選択範囲を翻訳
+    'voldikss/vim-translator',
+    cmd = { 'Translate', 'TranslateW', 'TranslateR' },
+    config = function()
+      vim.g.translator_target_lang = 'en'
+      vim.g.translator_source_lang = 'ja'
+      vim.g.translator_window_type = 'preview'
+    end
   },
   {
     -- scrollbarの表示、hslensで検索結果のハイライト
@@ -286,6 +327,12 @@ require('lazy').setup({
         require("todo-comments").jump_next({ keywords = { "ERROR", "WARNING" } })
       end, { desc = "Next error/warning todo comment" })
     end,
+  },
+
+  {
+    -- :CB(l,c,r,a)(l,c,r)box[num]でcommentをいい感じの四角で囲む
+    "LudoPinelli/comment-box.nvim",
+    event = 'InsertEnter'
   },
 
   {
