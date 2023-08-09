@@ -80,10 +80,12 @@ map('n', '<Leader>P', '"+P', { noremap = true })
 map({ 'n', 'v' }, '<Leader>d', '"+d', { noremap = true })
 
 -- split window
-map('n', '<Leader>ss', ':split<Return><C-w>w')
-map('n', '<Leader>sv', ':vsplit<Return><C-w>w')
-
+-- map('n', '<Leader>s|', ':split<Return><C-w>w')
+-- map('n', '<Leader>s|', ':vsplit<Return><C-w>w')
 map('n', '<Leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
+
+-- move right(undo keep)
+map('i', '<C-l>', '<C-g>U<Right>', { silent = true })
 
 -- Enter insert mode when switching to terminal
 vim.api.nvim_create_autocmd('TermOpen', {
@@ -198,7 +200,7 @@ require('lazy').setup({
     end
   },
   {
-    -- registerの内容を引き継ぐ
+    -- registerの内容でoperatorを上書き
     "gbprod/substitute.nvim",
     config = function()
       require("substitute").setup({
@@ -853,7 +855,6 @@ require('lazy').setup({
     -- 括弧、タグ等の挿入・変更・削除
     'kylechui/nvim-surround',
     version = '*', -- Use for stability; omit to use `main` branch for the latest features
-    event = 'InsertEnter',
     config = function()
       require("nvim-surround").setup({
         -- Configuration here, or leave empty to use defaults
@@ -1043,7 +1044,7 @@ require('lazy').setup({
       -- load snippets from path/of/your/nvim/config/my-cool-snippets
       -- luasnip.loaders.from_vscode.lazy_load({ paths = { os.getenv("HOME") .. "/Library/Application Support/Code/User/snippets" } })
       require('luasnip.loaders.from_vscode').lazy_load({ paths = { os.getenv('HOME') .. '/.config/nvim/snippets/' } })
-      map({ 'i', 's' }, '<C-l>', '<Plug>luasnip-expand-or-jump', { silent = true, noremap = false })
+      map({ 'i', 's' }, '<C-k>', '<Plug>luasnip-expand-or-jump', { silent = true, noremap = false })
       map({ 'i', 's' }, '<A-h>', function() luasnip.jump(-1) end, { expr = true, noremap = false })
       map({ 'i', 's' }, '<A-l>', function() luasnip.jump(1) end, { expr = true, noremap = false })
 
@@ -1372,7 +1373,7 @@ require('lazy').setup({
       map('n', '<space>e', '<cmd>Lspsaga show_line_diagnostics<CR>')
       map('n', '[e', '<cmd>Lspsaga diagnostic_jump_prev<CR>')
       map('n', ']e', '<cmd>Lspsaga diagnostic_jump_next<CR>')
-      map('n', '<A-j>', '<cmd>Lspsaga term_toggle<CR>')
+      map({'n', 't'}, '<A-j>', '<cmd>Lspsaga term_toggle<CR>')
       map('n', 'go', '<cmd>Lspsaga outline<CR>')
 
       -- Use LspAttach autocommand to only map the following keys
