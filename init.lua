@@ -143,7 +143,7 @@ require('lazy').setup({
       map('i', '<c-t>', '<esc><Cmd>exe v:count1 . "ToggleTerm"<CR>', { noremap = true, silent = true })
 
       function _G.set_terminal_keymaps()
-        local opts = {buffer = 0}
+        local opts = { buffer = 0 }
         vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
         vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
         vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
@@ -225,11 +225,6 @@ require('lazy').setup({
     end,
   },
   {
-    -- 左右にある各単語のユニークな文字をハイライト
-    'unblevable/quick-scope',
-    lazy = false
-  },
-  {
     -- markを可視化
     'chentoast/marks.nvim',
     config = function()
@@ -288,7 +283,7 @@ require('lazy').setup({
     "folke/tokyonight.nvim",
     config = function()
       -- load the colorscheme here
-      -- vim.cmd([[colorscheme tokyonight]])
+      vim.cmd([[colorscheme tokyonight-night]])
     end,
   },
 
@@ -300,7 +295,7 @@ require('lazy').setup({
         -- leave this setup function empty for default config
         -- or refer to the configuration section
         -- for configuration options
-        vim.cmd([[colorscheme poimandres]])
+        -- vim.cmd([[colorscheme poimandres]])
       }
     end
   },
@@ -1141,6 +1136,20 @@ require('lazy').setup({
     dependencies = {
       "neovim/nvim-lspconfig" }
   },
+  {
+    'scalameta/nvim-metals',
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", { clear = true })
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "scala", "sbt", "java" },
+        callback = function()
+          require("metals").initialize_or_attach({})
+        end,
+        group = nvim_metals_group,
+      })
+    end
+  },
   { 'hrsh7th/cmp-buffer',       event = 'InsertEnter' },
   { 'hrsh7th/cmp-path',         event = 'InsertEnter' },
   { 'saadparwaiz1/cmp_luasnip', event = 'InsertEnter' },
@@ -1181,18 +1190,18 @@ require('lazy').setup({
       -- your configuration comes here
       -- or leave it empty to use the default settings
       -- refer to the configuration section below
-      position = "bottom",            -- position of the list can be: bottom, top, left, right
-      height = 10,                    -- height of the trouble list when position is top or bottom
-      width = 50,                     -- width of the list when position is left or right
-      icons = true,                   -- use devicons for filenames
+      position = "bottom", -- position of the list can be: bottom, top, left, right
+      height = 10, -- height of the trouble list when position is top or bottom
+      width = 50, -- width of the list when position is left or right
+      icons = true, -- use devicons for filenames
       mode = "workspace_diagnostics", -- "workspace_diagnostics", "document_diagnostics", "quickfix", "lsp_references", "loclist"
-      severity = nil,                 -- nil (ALL) or vim.diagnostic.severity.ERROR | WARN | INFO | HINT
-      fold_open = "",              -- icon used for open folds
-      fold_closed = "",            -- icon used for closed folds
-      group = true,                   -- group results by file
-      padding = true,                 -- add an extra new line on top of the list
-      cycle_results = true,           -- cycle item list when reaching beginning or end of list
-      action_keys = {                 -- key mappings for actions in the trouble list
+      severity = nil, -- nil (ALL) or vim.diagnostic.severity.ERROR | WARN | INFO | HINT
+      fold_open = "", -- icon used for open folds
+      fold_closed = "", -- icon used for closed folds
+      group = true, -- group results by file
+      padding = true, -- add an extra new line on top of the list
+      cycle_results = true, -- cycle item list when reaching beginning or end of list
+      action_keys = { -- key mappings for actions in the trouble list
         -- map to {} to remove a mapping, for example:
         -- close = {},
         close = "q",                     -- close the list
@@ -1373,7 +1382,7 @@ require('lazy').setup({
       map('n', '<space>e', '<cmd>Lspsaga show_line_diagnostics<CR>')
       map('n', '[e', '<cmd>Lspsaga diagnostic_jump_prev<CR>')
       map('n', ']e', '<cmd>Lspsaga diagnostic_jump_next<CR>')
-      map({'n', 't'}, '<A-j>', '<cmd>Lspsaga term_toggle<CR>')
+      map({ 'n', 't' }, '<A-j>', '<cmd>Lspsaga term_toggle<CR>')
       map('n', 'go', '<cmd>Lspsaga outline<CR>')
 
       -- Use LspAttach autocommand to only map the following keys
