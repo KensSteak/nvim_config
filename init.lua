@@ -6,6 +6,7 @@ vim.g.mapleader = " "
 local opt = vim.opt
 local map = require('vim.keymap').set
 
+
 --------------------------------------------------------------------------------------
 -- base config -----------------------------------------------------------------------
 --------------------------------------------------------------------------------------
@@ -69,12 +70,13 @@ end
 opt.laststatus = 2
 
 -- keymap
-map('n', 'Y', 'y$', { noremap = true })
-map('n', '<Leader><Leader>', ':<C-u>nohlsearch<CR>', { noremap = true, silent = true })
+-- map('n', '/', '/\\v', { noremap = true }) -- //<Cr>をする時に使い勝手が悪い
+-- map('n', 'Y', 'y$', { noremap = true })
+map('n', '<C-l>', ':<C-u>nohlsearch<CR><C-l>', { noremap = true, silent = true }) -- 元々<C-l>は画面をリフレッシュするので、ハイライトのリセットをついでにしてもらう
 
 -- use clipboard <Leader> + ~
 map({ 'n', 'v' }, '<Leader>y', '"+y', { noremap = true })
-map('n', '<Leader>Y', '"+y$', { noremap = true })
+map('n', '<Leader>Y', '"+Y', { noremap = true })
 map({ 'n', 'v' }, '<Leader>p', '"+p', { noremap = true })
 map('n', '<Leader>P', '"+P', { noremap = true })
 map({ 'n', 'v' }, '<Leader>d', '"+d', { noremap = true })
@@ -86,6 +88,12 @@ map('n', '<Leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
 
 -- move right(undo keep)
 map('i', '<C-l>', '<C-g>U<Right>', { silent = true })
+
+-- move window
+-- map('n', '<C-h>', '<C-w>h', { noremap = true, silent = true })
+-- map('n', '<C-l>', '<C-w>l', { noremap = true, silent = true })
+-- map('n', '<C-j>', '<C-w>j', { noremap = true, silent = true })
+-- map('n', '<C-k>', '<C-w>k', { noremap = true, silent = true })
 
 -- Enter insert mode when switching to terminal
 vim.api.nvim_create_autocmd('TermOpen', {
@@ -828,8 +836,8 @@ require('lazy').setup({
           end
         }
       })
-      map('n', '<leader>j', ':<C-u>BufferLineCycleNext<CR>', { noremap = true, silent = true })
-      map('n', '<leader>k', ':<C-u>BufferLineCyclePrev<CR>', { noremap = true, silent = true })
+      map('n', '<Tab>', ':<C-u>BufferLineCycleNext<CR>', { noremap = true, silent = true })
+      map('n', '<S-Tab>', ':<C-u>BufferLineCyclePrev<CR>', { noremap = true, silent = true })
       map('n', '<A-p>', ':<C-u>BufferLineTogglePin<CR>', { noremap = true, silent = true })
     end
   },
@@ -943,6 +951,8 @@ require('lazy').setup({
         { noremap = true }
       )
 
+      local actions = require("telescope.actions")
+
       -- You don't need to set any of these options.
       -- IMPORTANT!: this is only a showcase of how you can set default options!
       require("telescope").setup {
@@ -953,6 +963,7 @@ require('lazy').setup({
             hijack_netrw = true,
             mappings = {
               ["i"] = {
+                ["<C-n>"] = actions.close,
                 -- your custom insert mode mappings
               },
               ["n"] = {
