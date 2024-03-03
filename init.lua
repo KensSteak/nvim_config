@@ -1,4 +1,4 @@
-vim.g.mapleader = " "
+vim.g.mapleader = ' '
 
 local opt = vim.opt
 local map = require('vim.keymap').set
@@ -60,7 +60,7 @@ vim.api.nvim_create_autocmd(
   }
 )
 
-if vim.fn.exists('+termguicolors') == 1 and vim.env.TERM_PROGRAM ~= "Apple_Terminal" then
+if vim.fn.exists('+termguicolors') == 1 and vim.env.TERM_PROGRAM ~= 'Apple_Terminal' then
   opt.termguicolors = true
 end
 opt.laststatus = 2
@@ -103,14 +103,14 @@ vim.api.nvim_create_autocmd('TermOpen', {
 -- plugin config ---------------------------------------------------------------------
 --------------------------------------------------------------------------------------
 
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable", -- latest stable release
+    'git',
+    'clone',
+    '--filter=blob:none',
+    'https://github.com/folke/lazy.nvim.git',
+    '--branch=stable', -- latest stable release
     lazypath,
   })
 end
@@ -120,8 +120,8 @@ opt.rtp:prepend(lazypath)
 require('lazy').setup({
   {
     -- TODO: キーマップの一覧を登録する
-    "folke/which-key.nvim",
-    event = "VeryLazy",
+    'folke/which-key.nvim',
+    event = 'VeryLazy',
     init = function()
       vim.o.timeout = true
       vim.o.timeoutlen = 300
@@ -135,7 +135,7 @@ require('lazy').setup({
   {
     -- 複数ターミナルの切り替え
     'akinsho/toggleterm.nvim',
-    version = "*",
+    version = '*',
     config = function()
       require('toggleterm').setup({
         shade_terminals = false
@@ -171,16 +171,11 @@ require('lazy').setup({
   {
     -- 起動時にファイル名の引数なしで起動した場合に表示するスタートアップ画面を設定できる。
     'goolord/alpha-nvim',
-    event = "VimEnter",
+    event = 'VimEnter',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
       require('alpha').setup(require 'alpha.themes.startify'.opts)
     end
-  },
-  {
-    -- registerの内容を引き継ぐ
-    'yutkat/save-clipboard-on-exit.nvim',
-    lazy = false,
   },
   {
     -- :Translateコマンドで選択範囲を翻訳
@@ -203,18 +198,18 @@ require('lazy').setup({
   },
   {
     -- registerの内容でoperatorを上書き
-    "gbprod/substitute.nvim",
+    'gbprod/substitute.nvim',
     config = function()
-      require("substitute").setup({
+      require('substitute').setup({
         -- your configuration comes here
         -- or leave it empty to use the default settings
         -- refer to the configuration section below
       })
       -- Lua
-      map("n", "<leader>s", require('substitute').operator, { noremap = true })
-      map("n", "<leader>ss", require('substitute').line, { noremap = true })
-      map("n", "<leader>S", require('substitute').eol, { noremap = true })
-      map("x", "<leader>s", require('substitute').visual, { noremap = true })
+      map('n', '<leader>s', require('substitute').operator, { noremap = true })
+      map('n', '<leader>ss', require('substitute').line, { noremap = true })
+      map('n', '<leader>S', require('substitute').eol, { noremap = true })
+      map('x', '<leader>s', require('substitute').visual, { noremap = true })
     end
   },
   {
@@ -234,7 +229,7 @@ require('lazy').setup({
         -- whether to map keybinds or not. default true
         default_mappings = true,
         -- which builtin marks to show. default {}
-        builtin_marks = { ".", "<", ">", "^" },
+        builtin_marks = { '.', '<', '>', '^' },
         -- whether movements cycle back to the beginning/end of buffer. default true
         cyclic = true,
         -- whether the shada file is updated after modifying uppercase marks. default false
@@ -256,8 +251,8 @@ require('lazy').setup({
         -- across multiple buffers. default sign is '!@#$%^&*()' (from 0 to 9), and
         -- default virt_text is "".
         bookmark_0 = {
-          sign = "⚑",
-          virt_text = "hello world"
+          sign = '⚑',
+          virt_text = 'hello world'
         },
         mappings = {}
       })
@@ -282,7 +277,7 @@ require('lazy').setup({
 
   {
     -- colorscheme
-    "folke/tokyonight.nvim",
+    'folke/tokyonight.nvim',
     config = function()
       -- load the colorscheme here
       vim.cmd([[colorscheme tokyonight-night]])
@@ -304,33 +299,33 @@ require('lazy').setup({
 
   {
     -- todoをハイライト
-    "folke/todo-comments.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
+    'folke/todo-comments.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' },
     config = function()
-      require("todo-comments").setup {
+      require('todo-comments').setup {
         -- your configuration comes here
         -- or leave it empty to use the default settings
         -- refer to the configuration section below
       }
-    vim.keymap.set("n", "]t", function()
-        require("todo-comments").jump_next()
-      end, { desc = "Next todo comment" })
+    vim.keymap.set('n', ']t', function()
+        require('todo-comments').jump_next()
+      end, { desc = 'Next todo comment' })
 
-      vim.keymap.set("n", "[t", function()
-        require("todo-comments").jump_prev()
-      end, { desc = "Previous todo comment" })
+      vim.keymap.set('n', '[t', function()
+        require('todo-comments').jump_prev()
+      end, { desc = 'Previous todo comment' })
 
       -- You can also specify a list of valid jump keywords
 
-      vim.keymap.set("n", "]t", function()
-        require("todo-comments").jump_next({ keywords = { "ERROR", "WARNING" } })
-      end, { desc = "Next error/warning todo comment" })
+      vim.keymap.set('n', ']t', function()
+        require('todo-comments').jump_next({ keywords = { 'ERROR', 'WARNING' } })
+      end, { desc = 'Next error/warning todo comment' })
     end,
   },
 
   {
     -- :CB(l,c,r,a)(l,c,r)box[num]でcommentをいい感じの四角で囲む
-    "LudoPinelli/comment-box.nvim",
+    'LudoPinelli/comment-box.nvim',
     event = 'InsertEnter'
   },
 
@@ -345,9 +340,9 @@ require('lazy').setup({
 
   {
     -- 16進数の横に参考の色を表示
-    "hek14/symbol-overlay.nvim",
-    event = "VeryLazy",
-    dependencies = { "neovim/nvim-lspconfig", 'nvim-telescope/telescope.nvim' },
+    'hek14/symbol-overlay.nvim',
+    event = 'VeryLazy',
+    dependencies = { 'neovim/nvim-lspconfig', 'nvim-telescope/telescope.nvim' },
     config = function()
       require('symbol-overlay').setup({
         keymap = {
@@ -391,11 +386,11 @@ require('lazy').setup({
 
   {
     -- lazygitをnvimから起動
-    "kdheepak/lazygit.nvim",
+    'kdheepak/lazygit.nvim',
     -- optional for floating window border decoration
     cmd = 'LazyGit',
     dependencies = {
-      "nvim-lua/plenary.nvim",
+      'nvim-lua/plenary.nvim',
     },
     config = function()
       -- map('n', '<Leader>gg', ':LazyGit<CR>', { noremap = true, silent = true })
@@ -403,11 +398,11 @@ require('lazy').setup({
   },
 
   {
-    "zbirenbaum/copilot-cmp",
-    event = "InsertEnter",
+    'zbirenbaum/copilot-cmp',
+    event = 'InsertEnter',
     dependencies = { 'zbirenbaum/copilot.lua' },
     config = function()
-      require("copilot_cmp").setup(
+      require('copilot_cmp').setup(
       -- suggestion = { enabled = false },
       -- panel = { enabled = false },
       )
@@ -415,22 +410,22 @@ require('lazy').setup({
   },
 
   {
-    "zbirenbaum/copilot.lua",
-    event = "InsertEnter",
+    'zbirenbaum/copilot.lua',
+    event = 'InsertEnter',
     config = function()
       require('copilot').setup({
         -- panel = {
         --   enabled = true,
         --   auto_refresh = false,
         --   keymap = {
-        --     jump_prev = "[[",
-        --     jump_next = "]]",
-        --     accept = "<CR>",
-        --     refresh = "gr",
-        --     open = "<M-CR>"
+        --     jump_prev = '[[',
+        --     jump_next = ']]',
+        --     accept = '<CR>',
+        --     refresh = 'gr',
+        --     open = '<M-CR>'
         --   },
         --   layout = {
-        --     position = "bottom", -- | top | left | right
+        --     position = 'bottom', -- | top | left | right
         --     ratio = 0.4
         --   },
         -- },
@@ -439,12 +434,12 @@ require('lazy').setup({
         --   auto_trigger = false,
         --   debounce = 75,
         --   keymap = {
-        --     accept = "<M-l>",
+        --     accept = '<M-l>',
         --     accept_word = false,
         --     accept_line = false,
-        --     next = "<M-]>",
-        --     prev = "<M-[>",
-        --     dismiss = "<C-]>",
+        --     next = '<M-]>',
+        --     prev = '<M-[>',
+        --     dismiss = '<C-]>',
         --   },
         -- },
         -- filetypes = {
@@ -456,7 +451,7 @@ require('lazy').setup({
         --   hgcommit = false,
         --   svn = false,
         --   cvs = false,
-        --   ["."] = false,
+        --   ['.'] = false,
         -- },
         -- copilot_node_command = 'node', -- Node.js version must be > 16.x
         -- server_opts_overrides = {},
@@ -469,8 +464,8 @@ require('lazy').setup({
     lazy = false,
     config = function()
       require 'nvim-treesitter.configs'.setup {
-        -- A list of parser names, or "all" (the five listed parsers should always be installed)
-        ensure_installed = { "c", "lua", "vim", "vimdoc", "query" },
+        -- A list of parser names, or 'all' (the five listed parsers should always be installed)
+        ensure_installed = { 'c', 'lua', 'vim', 'vimdoc', 'query' },
 
         -- Install parsers synchronously (only applied to `ensure_installed`)
         sync_install = false,
@@ -479,11 +474,11 @@ require('lazy').setup({
         -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
         auto_install = true,
 
-        -- List of parsers to ignore installing (for "all")
+        -- List of parsers to ignore installing (for 'all')
         ignore_install = {},
 
         ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
-        -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
+        -- parser_install_dir = '/some/path/to/store/parsers', -- Remember to run vim.opt.runtimepath:append('/some/path/to/store/parsers')!
 
         highlight = {
           enable = true,
@@ -540,6 +535,20 @@ require('lazy').setup({
   --     require('nvim_context_vt').setup()
   --   end
   -- },
+  --{
+  {
+    -- git用Client
+    "NeogitOrg/neogit",
+    dependencies = {
+      "nvim-lua/plenary.nvim",         -- required
+      "sindrets/diffview.nvim",        -- optional - Diff integration
+
+      -- Only one of these is needed, not both.
+      "nvim-telescope/telescope.nvim", -- optional
+      -- "ibhagwan/fzf-lua",              -- optional
+    },
+    config = true
+  },
 
   {
     -- gitの情報を可視化、stage用の機能を追加
@@ -627,7 +636,7 @@ require('lazy').setup({
           map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
         end
       }
-      require("scrollbar.handlers.gitsigns").setup()
+      require('scrollbar.handlers.gitsigns').setup()
     end
   },
 
@@ -686,7 +695,7 @@ require('lazy').setup({
     'tversteeg/registers.nvim',
     lazy = false,
     config = function()
-      require("registers").setup()
+      require('registers').setup()
     end
   },
 
@@ -700,18 +709,18 @@ require('lazy').setup({
     'chrisgrieser/nvim-various-textobjs',
     config = function()
       -- default config
-      require("various-textobjs").setup {
-        -- lines to seek forwards for "small" textobjs (mostly characterwise textobjs)
+      require('various-textobjs').setup {
+        -- lines to seek forwards for 'small' textobjs (mostly characterwise textobjs)
         -- set to 0 to only look in the current line
         lookForwardSmall = 5,
 
-        -- lines to seek forwards for "big" textobjs (mostly linewise textobjs)
+        -- lines to seek forwards for 'big' textobjs (mostly linewise textobjs)
         lookForwardBig = 15,
 
         -- use suggested keymaps (see README)
         useDefaultKeymaps = true,
 
-        -- disable some default keymaps, e.g. { "ai", "ii" }
+        -- disable some default keymaps, e.g. { 'ai', 'ii' }
         disabledKeymaps = {},
       }
     end
@@ -750,7 +759,7 @@ require('lazy').setup({
             }
           },
           lualine_c = { {
-            "aerial",
+            'aerial',
             -- The separator to be used to separate symbols in status line.
             sep = ' ) ',
 
@@ -811,19 +820,19 @@ require('lazy').setup({
   {
     -- buffer表示用
     'akinsho/bufferline.nvim',
-    version = "*",
+    version = '*',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
       local bufferline = require('bufferline')
       bufferline.setup({
         options = {
-          diagnostics = "nvim_lsp",
+          diagnostics = 'nvim_lsp',
           ---@diagnostic disable-next-line: unused-local
           diagnostics_indicator = function(count, level, diagnostics_dict, context)
-            local s = " "
+            local s = ' '
             for e, n in pairs(diagnostics_dict) do
-              local sym = e == "error" and " "
-                  or (e == "warning" and " " or "")
+              local sym = e == 'error' and ' '
+                  or (e == 'warning' and ' ' or '')
               s = s .. n .. ' ' .. sym
             end
             return s
@@ -853,7 +862,7 @@ require('lazy').setup({
     'kylechui/nvim-surround',
     version = '*', -- Use for stability; omit to use `main` branch for the latest features
     config = function()
-      require("nvim-surround").setup({
+      require('nvim-surround').setup({
         -- Configuration here, or leave empty to use defaults
       })
     end
@@ -861,19 +870,19 @@ require('lazy').setup({
     --     Old text                    Command         New text
     -- --------------------------------------------------------------------------------
     --     surr*ound_words             ysiw)           (surround_words)
-    --     *make strings               ys$"            "make strings"
+    --     *make strings               ys$'            'make strings"
     --     [delete ar*ound me!]        ds]             delete around me!
     --     remove <b>HTML t*ags</b>    dst             remove HTML tags
-    --     'change quot*es'            cs'"            "change quotes"
+    --     'change quot*es'            cs''            'change quotes"
     --     <b>or tag* types</b>        csth1<CR>       <h1>or tag types</h1>
     --     delete(functi*on calls)     dsf             function calls
   },
 
   {
-    "nvim-telescope/telescope-frecency.nvim",
-    dependencies = { "kkharji/sqlite.lua" },
+    'nvim-telescope/telescope-frecency.nvim',
+    dependencies = { 'kkharji/sqlite.lua' },
     config = function()
-      require "telescope".load_extension("frecency")
+      require 'telescope'.load_extension('frecency')
       map('n', '<Leader>,', function() require('telescope').extensions.frecency.frecency() end,
         { noremap = true, silent = true })
     end,
@@ -882,7 +891,7 @@ require('lazy').setup({
   {
     'nvim-telescope/telescope.nvim',
     cmd = 'Telescope',
-    dependencies = { "nvim-lua/plenary.nvim" },
+    dependencies = { 'nvim-lua/plenary.nvim' },
     config = function()
       local builtin = require('telescope.builtin')
       map('n', '<leader>ff', builtin.find_files, {})
@@ -892,15 +901,15 @@ require('lazy').setup({
       map('n', '<leader>fh', builtin.help_tags, {})
       map('n', '<Leader>b', builtin.buffers, {})
 
-      local actions = require("telescope.actions")
-      require("telescope").setup({
+      local actions = require('telescope.actions')
+      require('telescope').setup({
         defaults = {
           mappings = {
             i = {
-              -- ["<esc>"] = actions.close
+              -- ['<esc>'] = actions.close
             },
             n = {
-              ["q"] = actions.close
+              ['q'] = actions.close
             }
           },
           extensions = {
@@ -908,7 +917,7 @@ require('lazy').setup({
               fuzzy = true,
               override_generic_sorter = true,
               override_file_sorter = true,
-              case_mode = "smart_case",
+              case_mode = 'smart_case',
             },
           },
         },
@@ -929,47 +938,47 @@ require('lazy').setup({
     'stevearc/oil.nvim',
     opts = {},
     -- Optional dependencies
-    dependencies = { "nvim-tree/nvim-web-devicons" },
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
-      require("oil").setup()
-      vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+      require('oil').setup()
+      vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
     end
   },
   {
-    "nvim-telescope/telescope-file-browser.nvim",
-    dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
+    'nvim-telescope/telescope-file-browser.nvim',
+    dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim' },
     config = function()
       -- open file_browser with the path of the current buffer
       vim.api.nvim_set_keymap(
-        "n",
-        "<Leader>fb",
-        ":Telescope file_browser initial_mode=normal<CR>",
+        'n',
+        '<Leader>fb',
+        ':Telescope file_browser initial_mode=normal<CR>',
         { noremap = true }
       )
 
       vim.api.nvim_set_keymap(
-        "n",
-        "<C-n>",
-        ":Telescope file_browser path=%:p:h select_buffer=true<CR>",
+        'n',
+        '<C-n>',
+        ':Telescope file_browser path=%:p:h select_buffer=true<CR>',
         { noremap = true }
       )
 
-      local actions = require("telescope.actions")
+      local actions = require('telescope.actions')
 
       -- You don't need to set any of these options.
       -- IMPORTANT!: this is only a showcase of how you can set default options!
-      require("telescope").setup {
+      require('telescope').setup {
         extensions = {
           file_browser = {
-            theme = "ivy",
+            theme = 'ivy',
             -- disables netrw and use telescope-file-browser in its place
             hijack_netrw = true,
             mappings = {
-              ["i"] = {
-                ["<C-n>"] = actions.close,
+              ['i'] = {
+                ['<C-n>'] = actions.close,
                 -- your custom insert mode mappings
               },
-              ["n"] = {
+              ['n'] = {
                 -- your custom normal mode mappings
               },
             },
@@ -978,19 +987,19 @@ require('lazy').setup({
       }
       -- To get telescope-file-browser loaded and working with telescope,
       -- you need to call load_extension, somewhere after setup function:
-      require("telescope").load_extension "file_browser"
+      require('telescope').load_extension 'file_browser'
     end
   },
 
   {
     -- インデントガイド, 改行位置を視覚化
     'lukas-reineke/indent-blankline.nvim',
+    main = "ibl",
     event = 'BufEnter',
     config = function()
       opt.list = true
-      opt.listchars:append "eol:↴"
-      require('indent_blankline').setup {
-        show_end_of_line = true,
+      opt.listchars:append 'eol:↴'
+      require('ibl').setup {
       }
     end
   },
@@ -1006,10 +1015,10 @@ require('lazy').setup({
 
   {
     -- LSPのprogressを右下にふわっと表示
-    "j-hui/fidget.nvim",
-    tag = "legacy",
+    'j-hui/fidget.nvim',
+    tag = 'legacy',
     config = function()
-      require("fidget").setup()
+      require('fidget').setup()
     end
   },
 
@@ -1019,7 +1028,7 @@ require('lazy').setup({
     event = 'BufEnter',
     config = function()
       -- require('hlslens').setup()
-      require("scrollbar.handlers.search").setup({
+      require('scrollbar.handlers.search').setup({
         -- hlslens config overrides
       })
       local kopts = { noremap = true, silent = true }
@@ -1035,7 +1044,7 @@ require('lazy').setup({
       local has_words_before = function()
         unpack = unpack or table.unpack
         local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-        return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+        return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match('%s') == nil
       end
 
       local cmp = require('cmp')
@@ -1044,14 +1053,14 @@ require('lazy').setup({
 
       lspkind.init({
         symbol_map = {
-          Copilot = "",
+          Copilot = '',
         },
       })
 
-      vim.api.nvim_set_hl(0, "CmpItemKindCopilot", { fg = "#6CC644" })
+      vim.api.nvim_set_hl(0, 'CmpItemKindCopilot', { fg = '#6CC644' })
 
       -- load snippets from path/of/your/nvim/config/my-cool-snippets
-      -- luasnip.loaders.from_vscode.lazy_load({ paths = { os.getenv("HOME") .. "/Library/Application Support/Code/User/snippets" } })
+      -- luasnip.loaders.from_vscode.lazy_load({ paths = { os.getenv('HOME') .. '/Library/Application Support/Code/User/snippets' } })
       require('luasnip.loaders.from_vscode').lazy_load({ paths = { os.getenv('HOME') .. '/.config/nvim/snippets/' } })
       map({ 'i', 's' }, '<C-k>', '<Plug>luasnip-expand-or-jump', { silent = true, noremap = false })
       map({ 'i', 's' }, '<A-h>', function() luasnip.jump(-1) end, { expr = true, noremap = false })
@@ -1074,7 +1083,7 @@ require('lazy').setup({
         },
 
         mapping = cmp.mapping.preset.insert({
-          ["<Tab>"] = cmp.mapping(function(fallback)
+          ['<Tab>'] = cmp.mapping(function(fallback)
             if cmp.visible() then
               cmp.select_next_item()
               -- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
@@ -1086,9 +1095,9 @@ require('lazy').setup({
             else
               fallback()
             end
-          end, { "i", "s" }),
+          end, { 'i', 's' }),
 
-          ["<S-Tab>"] = cmp.mapping(function(fallback)
+          ['<S-Tab>'] = cmp.mapping(function(fallback)
             if cmp.visible() then
               cmp.select_prev_item()
             elseif luasnip.jumpable(-1) then
@@ -1096,7 +1105,7 @@ require('lazy').setup({
             else
               fallback()
             end
-          end, { "i", "s" }),
+          end, { 'i', 's' }),
           ['<C-b>'] = cmp.mapping.scroll_docs(-4),
           ['<C-f>'] = cmp.mapping.scroll_docs(4),
           ['<C-Space>'] = cmp.mapping.complete(),
@@ -1148,17 +1157,17 @@ require('lazy').setup({
     'hrsh7th/cmp-nvim-lsp',
     event = 'InsertEnter',
     dependencies = {
-      "neovim/nvim-lspconfig" }
+      'neovim/nvim-lspconfig' }
   },
   {
     'scalameta/nvim-metals',
-    dependencies = { "nvim-lua/plenary.nvim" },
+    dependencies = { 'nvim-lua/plenary.nvim' },
     config = function()
-      local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", { clear = true })
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "scala", "sbt", "java" },
+      local nvim_metals_group = vim.api.nvim_create_augroup('nvim-metals', { clear = true })
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = { 'scala', 'sbt', 'java' },
         callback = function()
-          require("metals").initialize_or_attach({})
+          require('metals').initialize_or_attach({})
         end,
         group = nvim_metals_group,
       })
@@ -1173,13 +1182,13 @@ require('lazy').setup({
     'hrsh7th/cmp-nvim-lsp-signature-help',
     event = 'InsertEnter',
     dependencies = {
-      "neovim/nvim-lspconfig" }
+      'neovim/nvim-lspconfig' }
   },
   {
     'hrsh7th/cmp-nvim-lsp-document-symbol',
     event = 'InsertEnter',
     dependencies = {
-      "neovim/nvim-lspconfig" }
+      'neovim/nvim-lspconfig' }
   },
   { 'hrsh7th/cmp-calc', event = 'InsertEnter' },
   {
@@ -1188,80 +1197,80 @@ require('lazy').setup({
     event = 'InsertEnter'
   },
   {
-    "L3MON4D3/LuaSnip",
+    'L3MON4D3/LuaSnip',
     -- follow latest release.
-    version = "1.*",
+    version = '1.*',
     -- install jsregexp (optional!).
-    build = "make install_jsregexp",
+    build = 'make install_jsregexp',
     event = 'InsertEnter',
-    dependencies = { "rafamadriz/friendly-snippets" },
+    dependencies = { 'rafamadriz/friendly-snippets' },
   },
   {
     -- LSP向けのdiagnosticへのJumpをサポートする
-    "folke/trouble.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
+    'folke/trouble.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
     opts = {
       -- your configuration comes here
       -- or leave it empty to use the default settings
       -- refer to the configuration section below
-      position = "bottom", -- position of the list can be: bottom, top, left, right
+      position = 'bottom', -- position of the list can be: bottom, top, left, right
       height = 10, -- height of the trouble list when position is top or bottom
       width = 50, -- width of the list when position is left or right
       icons = true, -- use devicons for filenames
-      mode = "workspace_diagnostics", -- "workspace_diagnostics", "document_diagnostics", "quickfix", "lsp_references", "loclist"
+      mode = 'workspace_diagnostics', -- 'workspace_diagnostics', 'document_diagnostics', 'quickfix', 'lsp_references', 'loclist'
       severity = nil, -- nil (ALL) or vim.diagnostic.severity.ERROR | WARN | INFO | HINT
-      fold_open = "", -- icon used for open folds
-      fold_closed = "", -- icon used for closed folds
+      fold_open = '', -- icon used for open folds
+      fold_closed = '', -- icon used for closed folds
       group = true, -- group results by file
       padding = true, -- add an extra new line on top of the list
       cycle_results = true, -- cycle item list when reaching beginning or end of list
       action_keys = { -- key mappings for actions in the trouble list
         -- map to {} to remove a mapping, for example:
         -- close = {},
-        close = "q",                     -- close the list
-        cancel = "<esc>",                -- cancel the preview and get back to your last window / buffer / cursor
-        refresh = "r",                   -- manually refresh
-        jump = { "<cr>", "<tab>" },      -- jump to the diagnostic or open / close folds
-        open_split = { "<c-x>" },        -- open buffer in new split
-        open_vsplit = { "<c-v>" },       -- open buffer in new vsplit
-        open_tab = { "<c-t>" },          -- open buffer in new tab
-        jump_close = { "o" },            -- jump to the diagnostic and close the list
-        toggle_mode = "m",               -- toggle between "workspace" and "document" diagnostics mode
-        switch_severity = "s",           -- switch "diagnostics" severity filter level to HINT / INFO / WARN / ERROR
-        toggle_preview = "P",            -- toggle auto_preview
-        hover = "K",                     -- opens a small popup with the full multiline message
-        preview = "p",                   -- preview the diagnostic location
-        close_folds = { "zM", "zm" },    -- close all folds
-        open_folds = { "zR", "zr" },     -- open all folds
-        toggle_fold = { "zA", "za" },    -- toggle fold of current file
-        previous = "k",                  -- previous item
-        next = "j"                       -- next item
+        close = 'q',                     -- close the list
+        cancel = '<esc>',                -- cancel the preview and get back to your last window / buffer / cursor
+        refresh = 'r',                   -- manually refresh
+        jump = { '<cr>', '<tab>' },      -- jump to the diagnostic or open / close folds
+        open_split = { '<c-x>' },        -- open buffer in new split
+        open_vsplit = { '<c-v>' },       -- open buffer in new vsplit
+        open_tab = { '<c-t>' },          -- open buffer in new tab
+        jump_close = { 'o' },            -- jump to the diagnostic and close the list
+        toggle_mode = 'm',               -- toggle between 'workspace' and 'document' diagnostics mode
+        switch_severity = 's',           -- switch 'diagnostics' severity filter level to HINT / INFO / WARN / ERROR
+        toggle_preview = 'P',            -- toggle auto_preview
+        hover = 'K',                     -- opens a small popup with the full multiline message
+        preview = 'p',                   -- preview the diagnostic location
+        close_folds = { 'zM', 'zm' },    -- close all folds
+        open_folds = { 'zR', 'zr' },     -- open all folds
+        toggle_fold = { 'zA', 'za' },    -- toggle fold of current file
+        previous = 'k',                  -- previous item
+        next = 'j'                       -- next item
       },
       indent_lines = true,               -- add an indent guide below the fold icons
       auto_open = false,                 -- automatically open the list when you have diagnostics
       auto_close = false,                -- automatically close the list when you have no diagnostics
       auto_preview = true,               -- automatically preview the location of the diagnostic. <esc> to close preview and go back to last window
       auto_fold = false,                 -- automatically fold a file trouble list at creation
-      auto_jump = { "lsp_definitions" }, -- for the given modes, automatically jump if there is only a single result
+      auto_jump = { 'lsp_definitions' }, -- for the given modes, automatically jump if there is only a single result
       signs = {
         -- icons / text used for a diagnostic
-        error = "",
-        warning = "",
-        hint = "",
-        information = "",
-        other = "",
+        error = '',
+        warning = '',
+        hint = '',
+        information = '',
+        other = '',
       },
       use_diagnostic_signs = false -- enabling this will use the signs defined in your lsp client
     },
     config = function()
-      map("n", "<leader>xx", "<cmd>TroubleToggle<cr>", { silent = true, noremap = true })
-      map("n", "<leader>xw", "<cmd>TroubleToggle workspace_diagnostics<cr>", { silent = true, noremap = true })
-      map("n", "<leader>xd", "<cmd>TroubleToggle document_diagnostics<cr>", { silent = true, noremap = true })
-      map("n", "<leader>xl", "<cmd>TroubleToggle loclist<cr>", { silent = true, noremap = true })
-      map("n", "<leader>xq", "<cmd>TroubleToggle quickfix<cr>", { silent = true, noremap = true })
-      map("n", "<leader>lr", "<cmd>TroubleToggle lsp_references<cr>", { silent = true, noremap = true })
-      map("n", "<leader>ld", "<cmd>TroubleToggle lsp_definitions<cr>", { silent = true, noremap = true })
-      map("n", "<leader>lt", "<cmd>TroubleToggle lsp_type_definitions<cr>", { silent = true, noremap = true })
+      map('n', '<leader>xx', '<cmd>TroubleToggle<cr>', { silent = true, noremap = true })
+      map('n', '<leader>xw', '<cmd>TroubleToggle workspace_diagnostics<cr>', { silent = true, noremap = true })
+      map('n', '<leader>xd', '<cmd>TroubleToggle document_diagnostics<cr>', { silent = true, noremap = true })
+      map('n', '<leader>xl', '<cmd>TroubleToggle loclist<cr>', { silent = true, noremap = true })
+      map('n', '<leader>xq', '<cmd>TroubleToggle quickfix<cr>', { silent = true, noremap = true })
+      map('n', '<leader>lr', '<cmd>TroubleToggle lsp_references<cr>', { silent = true, noremap = true })
+      map('n', '<leader>ld', '<cmd>TroubleToggle lsp_definitions<cr>', { silent = true, noremap = true })
+      map('n', '<leader>lt', '<cmd>TroubleToggle lsp_type_definitions<cr>', { silent = true, noremap = true })
     end
   },
   {
@@ -1271,8 +1280,8 @@ require('lazy').setup({
     opts = {},
     -- Optional dependencies
     dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "nvim-tree/nvim-web-devicons"
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-tree/nvim-web-devicons'
     },
     config = function()
       require('aerial').setup({
@@ -1288,7 +1297,6 @@ require('lazy').setup({
       require('telescope').load_extension('aerial')
     end
   },
-
   {
     -- markdown
     'iamcco/markdown-preview.nvim',
@@ -1325,10 +1333,10 @@ require('lazy').setup({
 
       lspconfig.rust_analyzer.setup {
         settings = {
-          ["rust-analyzer"] = {
+          ['rust-analyzer'] = {
             -- enable clippy on save
             check = {
-              command = "clippy"
+              command = 'clippy'
             }
           }
         },
@@ -1377,7 +1385,7 @@ require('lazy').setup({
     config = function()
       require('lspsaga').setup({
         ui = {
-          border = "single",
+          border = 'single',
         },
         symbol_in_winbar = {
           enable = true,
