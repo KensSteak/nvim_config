@@ -168,15 +168,15 @@ require('lazy').setup({
     'tyru/capture.vim',
     cmd = 'Capture',
   },
-  {
-    -- 起動時にファイル名の引数なしで起動した場合に表示するスタートアップ画面を設定できる。
-    'goolord/alpha-nvim',
-    event = 'VimEnter',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-    config = function()
-      require('alpha').setup(require 'alpha.themes.startify'.opts)
-    end
-  },
+  -- {
+  --   -- 起動時にファイル名の引数なしで起動した場合に表示するスタートアップ画面を設定できる。
+  --   'goolord/alpha-nvim',
+  --   event = 'VimEnter',
+  --   dependencies = { 'nvim-tree/nvim-web-devicons' },
+  --   config = function()
+  --     require('alpha').setup(require 'alpha.themes.startify'.opts)
+  --   end
+  -- },
   {
     -- :Translateコマンドで選択範囲を翻訳
     'voldikss/vim-translator',
@@ -287,6 +287,8 @@ require('lazy').setup({
   {
     -- colorscheme
     'olivercederborg/poimandres.nvim',
+    lazy = false,
+    priority = 1000,
     config = function()
       require('poimandres').setup {
         -- leave this setup function empty for default config
@@ -397,67 +399,67 @@ require('lazy').setup({
     end
   },
 
-  {
-    'zbirenbaum/copilot-cmp',
-    event = 'InsertEnter',
-    dependencies = { 'zbirenbaum/copilot.lua' },
-    config = function()
-      require('copilot_cmp').setup(
-      -- suggestion = { enabled = false },
-      -- panel = { enabled = false },
-      )
-    end
-  },
-
-  {
-    'zbirenbaum/copilot.lua',
-    event = 'InsertEnter',
-    config = function()
-      require('copilot').setup({
-        -- panel = {
-        --   enabled = true,
-        --   auto_refresh = false,
-        --   keymap = {
-        --     jump_prev = '[[',
-        --     jump_next = ']]',
-        --     accept = '<CR>',
-        --     refresh = 'gr',
-        --     open = '<M-CR>'
-        --   },
-        --   layout = {
-        --     position = 'bottom', -- | top | left | right
-        --     ratio = 0.4
-        --   },
-        -- },
-        -- suggestion = {
-        --   enabled = true,
-        --   auto_trigger = false,
-        --   debounce = 75,
-        --   keymap = {
-        --     accept = '<M-l>',
-        --     accept_word = false,
-        --     accept_line = false,
-        --     next = '<M-]>',
-        --     prev = '<M-[>',
-        --     dismiss = '<C-]>',
-        --   },
-        -- },
-        -- filetypes = {
-        --   yaml = false,
-        --   markdown = false,
-        --   help = false,
-        --   gitcommit = false,
-        --   gitrebase = false,
-        --   hgcommit = false,
-        --   svn = false,
-        --   cvs = false,
-        --   ['.'] = false,
-        -- },
-        -- copilot_node_command = 'node', -- Node.js version must be > 16.x
-        -- server_opts_overrides = {},
-      })
-    end,
-  },
+  -- {
+  --   'zbirenbaum/copilot-cmp',
+  --   event = 'InsertEnter',
+  --   dependencies = { 'zbirenbaum/copilot.lua' },
+  --   config = function()
+  --     require('copilot_cmp').setup(
+  --     -- suggestion = { enabled = false },
+  --     -- panel = { enabled = false },
+  --     )
+  --   end
+  -- },
+  --
+  -- {
+  --   'zbirenbaum/copilot.lua',
+  --   event = 'InsertEnter',
+  --   config = function()
+  --     require('copilot').setup({
+  --       -- panel = {
+  --       --   enabled = true,
+  --       --   auto_refresh = false,
+  --       --   keymap = {
+  --       --     jump_prev = '[[',
+  --       --     jump_next = ']]',
+  --       --     accept = '<CR>',
+  --       --     refresh = 'gr',
+  --       --     open = '<M-CR>'
+  --       --   },
+  --       --   layout = {
+  --       --     position = 'bottom', -- | top | left | right
+  --       --     ratio = 0.4
+  --       --   },
+  --       -- },
+  --       -- suggestion = {
+  --       --   enabled = true,
+  --       --   auto_trigger = false,
+  --       --   debounce = 75,
+  --       --   keymap = {
+  --       --     accept = '<M-l>',
+  --       --     accept_word = false,
+  --       --     accept_line = false,
+  --       --     next = '<M-]>',
+  --       --     prev = '<M-[>',
+  --       --     dismiss = '<C-]>',
+  --       --   },
+  --       -- },
+  --       -- filetypes = {
+  --       --   yaml = false,
+  --       --   markdown = false,
+  --       --   help = false,
+  --       --   gitcommit = false,
+  --       --   gitrebase = false,
+  --       --   hgcommit = false,
+  --       --   svn = false,
+  --       --   cvs = false,
+  --       --   ['.'] = false,
+  --       -- },
+  --       -- copilot_node_command = 'node', -- Node.js version must be > 16.x
+  --       -- server_opts_overrides = {},
+  --     })
+  --   end,
+  -- },
 
   {
     'nvim-treesitter/nvim-treesitter',
@@ -1326,10 +1328,10 @@ require('lazy').setup({
         capabilities = capabilities
       }
 
-      lspconfig.sourcekit.setup {
-        filetypes = { 'swift', 'objective-c', 'objective-cpp' },
-        capabilities = capabilities
-      }
+      -- lspconfig.sourcekit.setup {
+      --   filetypes = { 'swift', 'objective-c', 'objective-cpp' },
+      --   capabilities = capabilities
+      -- }
 
       lspconfig.rust_analyzer.setup {
         settings = {
@@ -1347,29 +1349,29 @@ require('lazy').setup({
         capabilities = capabilities
       }
 
-      lspconfig.lua_ls.setup {
-        settings = {
-          Lua = {
-            runtime = {
-              -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-              version = 'LuaJIT',
-            },
-            diagnostics = {
-              -- Get the language server to recognize the `vim` global
-              globals = { 'vim' },
-            },
-            workspace = {
-              -- Make the server aware of Neovim runtime files
-              -- library = vim.api.nvim_get_runtime_file("", true),
-            },
-            -- Do not send telemetry data containing a randomized but unique identifier
-            telemetry = {
-              enable = false,
-            },
-          },
-        },
-        capabilities = capabilities
-      }
+      -- lspconfig.lua_ls.setup {
+      --   settings = {
+      --     Lua = {
+      --       runtime = {
+      --         -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+      --         version = 'LuaJIT',
+      --       },
+      --       diagnostics = {
+      --         -- Get the language server to recognize the `vim` global
+      --         globals = { 'vim' },
+      --       },
+      --       workspace = {
+      --         -- Make the server aware of Neovim runtime files
+      --         -- library = vim.api.nvim_get_runtime_file("", true),
+      --       },
+      --       -- Do not send telemetry data containing a randomized but unique identifier
+      --       telemetry = {
+      --         enable = false,
+      --       },
+      --     },
+      --   },
+      --   capabilities = capabilities
+      -- }
 
       -- Global mappings. -------------------------------------------------------
       -- See `:help vim.diagnostic.*` for documentation on any of the below functions
