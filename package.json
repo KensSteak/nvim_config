@@ -1,0 +1,205 @@
+{
+    "editor.fontFamily": "'Fira Code'",
+    "editor.accessibilitySupport": "off",
+    "git.openRepositoryInParentFolders": "never",
+    // vim --------------------------------------------
+    "vim.camelCaseMotion.enable": true,
+    "vim.easymotion": true,
+    "vim.easymotionKeys": "yuiohjkl;",
+    "vim.enableNeovim": true,
+    "vim.foldfix": true,
+    "vim.highlightedyank.enable": true,
+    "vim.hlsearch": true,
+    "vim.leader": "<space>",
+    "vim.neovimPath": "/opt/homebrew/bin/nvim",
+    "vim.neovimUseConfigFile": false,
+    "vim.replaceWithRegister": true,
+    "vim.showMarksInGutter": true,
+    "vim.smartRelativeLine": true,
+    "vim.sneak": true,
+    "vim.sneakReplacesF": true,
+    "vim.sneakUseIgnorecaseAndSmartcase": true,
+    "vim.statusBarColorControl": true,
+    "vim.visualstar": true,
+    "vim.visualModeKeyBindingsNonRecursive": [
+        {
+            "before": [
+                "<leader>",
+                "y"
+            ],
+            "after": [
+                "\"",
+                "+",
+                "y"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "p"
+            ],
+            "after": [
+                "\"",
+                "+",
+                "p"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "d"
+            ],
+            "after": [
+                "\"",
+                "+",
+                "d"
+            ]
+        }
+    ],
+    "vim.normalModeKeyBindingsNonRecursive": [
+        {
+            "before": [
+                "<c-l>"
+            ],
+            "commands": [
+                ":nohl"
+            ]
+        },
+        {
+            "before": [
+                "u"
+            ],
+            "after": [],
+            "commands": [
+                {
+                    "command": "undo"
+                }
+            ]
+        },
+        {
+            "before": [
+                "<C-r>"
+            ],
+            "after": [],
+            "commands": [
+                {
+                    "command": "redo"
+                }
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "y"
+            ],
+            "after": [
+                "\"",
+                "+",
+                "y"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "p"
+            ],
+            "after": [
+                "\"",
+                "+",
+                "p"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "d"
+            ],
+            "after": [
+                "\"",
+                "+",
+                "d"
+            ]
+        },
+        {
+            "before": [
+                "<leader>",
+                "/"
+            ],
+            "after": [],
+            "commands": [
+                {
+                    "command": "workbench.action.findInFiles"
+                }
+            ]
+        },
+        {
+            "before": [
+                "F2"
+            ],
+            "after": [],
+            "commands": [
+                {
+                    "command": "editor.action.rename"
+                }
+            ]
+        },
+        {
+            "before": [
+                "c-n"
+            ],
+            "after": [],
+            "commands": [
+                {
+                    "command": "workbench.view.explorer"
+                }
+            ]
+        },
+        {
+            "before": [
+                "K"
+            ],
+            "after": [],
+            "commands": [
+                {
+                    "command": "editor.action.showHover"
+                }
+            ]
+        },
+        {
+            "before": [
+                "g",
+                "d"
+            ],
+            "after": [],
+            "commands": [
+                {
+                    "command": "editor.action.peekDefinition"
+                }
+            ]
+        },
+        {
+            "before": [
+                "g",
+                "D"
+            ],
+            "after": [],
+            "commands": [
+                {
+                    "command": "editor.action.goToDeclaration"
+                }
+            ]
+        },
+    ],
+    // -----------------------------------------------
+    "workbench.colorCustomizations": {
+        "statusBar.background": "#005f87",
+        "statusBar.noFolderBackground": "#005f87",
+        "statusBar.debuggingBackground": "#005f87",
+        "statusBar.foreground": "#ffffff",
+        "statusBar.debuggingForeground": "#ffffff"
+    },
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "editor.wordWrap": "off",
+    "svelte.enable-ts-plugin": true,
+    "git.autofetch": true,
+}
