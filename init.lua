@@ -1,4 +1,5 @@
 vim.g.mapleader = ' '
+vim.g['denops#deno'] = '/opt/homebrew/bin/deno'
 
 local opt = vim.opt
 local map = require('vim.keymap').set
@@ -593,9 +594,6 @@ require('lazy').setup({
           relative = 'cursor',
           row = 0,
           col = 1
-        },
-        yadm                         = {
-          enable = false
         },
         on_attach                    = function(bufnr)
           local gs = package.loaded.gitsigns
